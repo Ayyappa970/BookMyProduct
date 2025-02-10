@@ -16,7 +16,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		com.shoping.book_my_product.entity.UserDetails user = userRepo.findByEmail(username);
+		 com.shoping.book_my_product.entity.UserDetails user = userRepo.findByEmail(username);
 		if(ObjectUtils.isEmpty(user)) {
 			throw new UsernameNotFoundException("User not found");
 		}

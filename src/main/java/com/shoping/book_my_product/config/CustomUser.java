@@ -5,18 +5,16 @@ import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import com.shoping.book_my_product.entity.UserDetails;
+public class CustomUser implements UserDetails{
+	private com.shoping.book_my_product.entity.UserDetails user;
+	
 
-public class CustomUser implements org.springframework.security.core.userdetails.UserDetails{
-	private UserDetails user;
-
-	public CustomUser(UserDetails user) {
+	public CustomUser(com.shoping.book_my_product.entity.UserDetails user) {
 		super();
 		this.user = user;
 	}
-
-	
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -33,34 +31,24 @@ public class CustomUser implements org.springframework.security.core.userdetails
 	public String getUsername() {
 		return user.getEmail();
 	}
-
-
-
+	
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
 	}
-
-
-
+	
 	@Override
 	public boolean isAccountNonLocked() {
-		return user.getAccountNonLocked();
+		return true;
 	}
 	
-
-
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
 	}
-
-
-
+	
 	@Override
 	public boolean isEnabled() {
 		return user.getIsEnable();
 	}
-	
-	
 }

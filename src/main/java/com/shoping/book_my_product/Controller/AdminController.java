@@ -14,7 +14,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,8 +31,6 @@ import com.shoping.book_my_product.service.ProductService;
 import com.shoping.book_my_product.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.Session;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
@@ -144,7 +141,7 @@ public class AdminController {
 		}else{
 			session.setAttribute("errorMsg", "server error");
 		}
-		return "redirect/admin/addProduct";
+		return "redirect:/admin/addProduct";
 	}
 	@GetMapping("/viewProduct")
 	public String viewProduct(Model model) {

@@ -1,5 +1,8 @@
 package com.shoping.book_my_product.entity;
 
+
+
+
 import java.util.Date;
 
 import jakarta.persistence.Entity;
@@ -32,6 +35,6 @@ public class UserDetails {
 	private Boolean isEnable;
 	private Boolean accountNonLocked;
 	private Integer failedAttempt;
-	private String lockTime;
+	private Date lockTime;
 	private String resetToken;
 }

@@ -107,8 +107,8 @@ public class HomeController {
 	@ModelAttribute
 	public void getUserDetails(Principal principal,Model model) {
 		if(!ObjectUtils.isEmpty(principal)) {
-			String name = principal.getName();
-			UserDetails userDetails = userService.getUserByEmail(name);
+			String email = principal.getName();
+			UserDetails userDetails = userService.getUserByEmail(email);
 			model.addAttribute("user", userDetails);
 			long countCart = cartSer.getCountCart(userDetails.getUserId());
 			model.addAttribute("countCart", countCart);

@@ -51,7 +51,7 @@
 							aria-current="page" href="/register">Register</a></li>
 					</th:block>
 					<th:block th:if="${user!=null}">
-					<th:block th:if="${countCart}>0">
+					 <th:block th:if="${countCart}>0">
 						<li class="nav-item"><a class="nav-link active"
 							aria-current="page" href="/user/carts"><i class="fa-solid fa-cart-shopping fa-bounce"></i>
 							 Cart <span class="badge bg-white text-primary">[[${countCart}]]</span></a></li>
