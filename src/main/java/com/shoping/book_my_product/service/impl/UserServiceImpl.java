@@ -1,0 +1,107 @@
+package com.shoping.book_my_product.service.impl;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import com.shoping.book_my_product.entity.UserDetails;
+import com.shoping.book_my_product.repository.UserRepository;
+import com.shoping.book_my_product.service.UserService;
+import com.shoping.book_my_product.util.AppConstant;
+@Service
+public class UserServiceImpl implements UserService {
+
+	@Autowired
+	private UserRepository userRepo;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Override
+	public UserDetails addUser(UserDetails user) {
+		user.setRole("ROLE_USER");
+		user.setIsEnable(true);
+		String encode = passwordEncoder.encode(user.getPassword());
+		user.setPassword(encode);
+		return userRepo.save(user);
+	}
+
+	@Override
+	public UserDetails getUserByEmail(String email) {
+		return userRepo.findByEmail(email);
+	}
+
+	@Override
+	public List<UserDetails> getAllUsers(String role) {
+		return userRepo.findByRole(role);
+	}
+
+	@Override
+	public Boolean updateAccountStatus(long id, Boolean status) {
+		UserDetails details = userRepo.findById(id).get();
+		if(!ObjectUtils.isEmpty(details)) {
+			details.setIsEnable(status);
+			userRepo.save(details);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void increaseFailedAttempt(UserDetails user) {
+		int attempt=user.getFailedAttempt()+1;
+		user.setFailedAttempt(attempt);
+		userRepo.save(user);
+	}
+
+	@Override
+	public void userAccountLock(UserDetails user) {
+		user.setAccountNonLocked(false);
+		user.setLockTime(new Date());
+		userRepo.save(user);
+	}
+
+	@Override
+	public boolean unLockAccountTimeExpired(UserDetails user) {
+		long lockTime = user.getLockTime().getTime();
+		long unlockTime=lockTime+AppConstant.UNLOCK_DURATION_TIME;
+		long currentTime = System.currentTimeMillis();
+		if(unlockTime<currentTime) {
+			user.setAccountNonLocked(true);
+			user.setFailedAttempt(0);
+			user.setLockTime(null);
+			userRepo.save(user);
+			return true;  
+		}
+		return false;
+	}
+
+	@Override
+	public void resetAttempt(long userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void updateUserResetToken(String email, String restToken) {
+		UserDetails byEmail = userRepo.findByEmail(email);
+		byEmail.setResetToken(restToken);
+		userRepo.save(byEmail);
+	}
+
+	@Override
+	public UserDetails getUserByToken(String token) {
+		return userRepo.findByResetToken(token);
+	} 
+	
+	@Override
+	public UserDetails updateUserDetailsByPassword(UserDetails user) {
+		return userRepo.save(user);
+	}
+
+}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Cart Page</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid p-5 mt-5 col-md-12">
+			<div class="card">
+				<div class="card-header text-center">
+					<p class="fs-4">View Carts</p>
+				</div>
+				<div class="card-body">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th scope="col">Sl.No</th>
+								<th scope="col">Image</th>
+								<th scope="col">Product Name</th>
+								<th scope="col">Price</th>
+								<th scope="col">Quantity</th>
+								<th scope="col">Total Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="cart,c:${carts}">
+								<th scope="row">[[${c.count}]]</th>
+								<td>
+									<img th:src="@{'/images/product_imgs/'+${cart.product.image}}" width="30" height="30" class="rounded"/>
+								</td>
+								<td>[[${cart.product.pName}]]</td>
+								<td>&#8377; [[${cart.product.discountPrice}]]</td>
+								<td>
+									<a th:href="@{'/user/cartQuantityUpdate?sym=dec&cid='+${cart.id}}" class="btn btn-sm btn-warning">-</a>
+									<button class="btn btn-sm">[[${cart.quantity}]]</button>
+									<a th:href="@{'/user/cartQuantityUpdate?sym=inc&cid='+${cart.id}}" class="btn btn-sm btn-info" >+</a>
+								</td>
+								<td>&#8377; [[${cart.totalPrice}]]</td>
+							</tr>
+							<tr>
+								<td colspan="4"></td>
+								<td class="fw-bold">TotalOrderPrice : </td>
+								<td class="fw-bold">&#8377; [[${totalOrderPrice}]]</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="col-md-12 offset-md-10">
+						<a href="/user/order" class="btn btn-primary" >Proceed Payment</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

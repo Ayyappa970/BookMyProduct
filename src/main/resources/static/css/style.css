@@ -1,0 +1,8 @@
+.card-sh{
+	box-shadow: 2px 2px 5px gray;
+	margin-top: 70px;
+	border-radius: 10px;
+}
+.card{
+	cursor: pointer;
+}

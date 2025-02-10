@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>View Product Page</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid p-5 mt-5 col-md-12">
+			<div class="card">
+				<div class="card-header text-center">
+					<p class="fs-4">View Product</p>
+					<th:block th:if="${session.succMsg}">
+								<p class="text-success fw-bold">[[${session.succMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+							</th:block>
+							<th:block th:if="${session.errorMsg}">
+								<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+							</th:block>
+				</div>
+				<div class="card-body">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th scope="col">Sl.No</th>
+								<th scope="col">Product Name</th>
+								<th scope="col">Description</th>
+								<th scope="col">Image</th>
+								<th scope="col">Price</th>
+								<th scope="col">Discount</th>
+								<th scope="col">Discount Price</th>
+								<th scope="col">Status</th>
+								<th scope="col">Category</th>
+								<th scope="col">Stock</th>
+								<th scope="col">Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="pro,p:${products}">
+								<th scope="row">[[${p.count}]]</th>
+								<td>[[${pro.pName}]]</td>
+								<td>[[${pro.description}]]</td>
+								<td>
+									<img th:src="@{'/images/product_imgs/'+${pro.image}}" width="50" height="50" class="rounded-circle"/>
+								</td>
+								<td>[[${pro.price}]]</td>
+								<td>[[${pro.discount}]] %</td>
+								<td>[[${pro.discountPrice}]]</td>
+								<td>[[${pro.isActive}]]</td>
+								<td>[[${pro.category}]]</td>
+								<td>[[${pro.stock}]]</td>
+								<td>
+									<a th:href="@{'/admin/editProduct/'+${pro.id}}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i> edit</a>
+									<a th:href="@{'/admin/deleteProduct/'+${pro.id}}" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i> delete</a>
+								</td>
+							</tr>
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

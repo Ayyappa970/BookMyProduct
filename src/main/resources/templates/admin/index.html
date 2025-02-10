@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Admin index Page</title>
+</head>
+<body>
+<section>
+	<div class="container p-2 mt-5">
+	<h1 class="fs-2 mt-3 text-center text-primary">Admin Dashboard</h1>
+		<div class="row p-2 mt-5">
+			<div class="col-md-4">
+				<a href="/admin/addProduct" class="text-decoration-none">
+				<div class="card">
+					<div class="card-body text-center text-primary">
+					<i class="fa-solid fa-square-plus fa-2x"></i>
+						<p class="fs-5">Add Product</p>
+					</div>
+				</div>
+				</a>
+			</div>
+			<div class="col-md-4">
+			<a href="/admin/category" class="text-decoration-none">
+				<div class="card">
+					<div class="card-body text-center text-info">
+					<i class="fa-solid fa-list fa-2x"></i>
+						<p class="fs-5">Category</p>
+					</div>
+				</div>
+				</a>
+			</div>
+			<div class="col-md-4">
+			<a href="/admin/viewProduct" class="text-decoration-none">
+				<div class="card">
+					<div class="card-body text-center text-success">
+					<i class="fa-solid fa-book-open fa-2x"></i>
+						<p class="fs-5">View Product</p>
+					</div>
+				</div>
+				</a>
+			</div>
+			<div class="col-md-4 mt-4">
+			<a href="#" class="text-decoration-none">
+				<div class="card">
+					<div class="card-body text-center text-warning">
+					<i class="fa-solid fa-box-open fa-2x"></i>
+						<p class="fs-5">Orders</p>
+					</div>
+				</div>
+				</a>
+			</div>
+			<div class="col-md-4 mt-4">
+			<a href="/admin/userslist" class="text-decoration-none">
+				<div class="card">
+					<div class="card-body text-center text-primary">
+					<i class="fa-solid fa-user fa-2x"></i>
+						<p class="fs-5">Users</p>
+					</div>
+				</div>
+				</a>
+			</div>
+			<div class="col-md-4 mt-4 mb-5">
+			<a href="#" class="text-decoration-none">
+				<div class="card">
+					<div class="card-body text-center text-primary">
+					<i class="fa-solid fa-user-plus fa-2x"></i>
+						<p class="fs-5">Add Admin</p>
+					</div>
+				</div>
+				</a>
+			</div>
+		</div>
+	</div>
+</section>
+</body>
+</html>

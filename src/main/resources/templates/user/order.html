@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>Order Page</title>
+</head>
+<body>
+	<section>
+		<div class="container mt-5 p-5">
+			<div class="row">
+				<div class="col-md-6 p-3">
+				<h3 class="text-center">Shipping Details</h3>
+						<hr />
+					<div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
+						
+						<form>
+							<div class="row mt-4">
+								<div class="col">
+									<label class="form-label">First Name</label> <input
+										class="form-control" name="firstName" type="text" required />
+								</div>
+								<div class="col mb-4">
+									<label class="form-label">Last Number</label> <input
+										class="form-control" name="lastName" type="text" required />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<label class="form-label">Email</label> <input
+										class="form-control" name="email" type="email" required />
+								</div>
+								<div class="col mb-4">
+									<label class="form-label">Mobile Number</label> <input
+										class="form-control" name="mobileNumber" type="number"
+										required />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<label class="form-label">State</label> <input
+										class="form-control" name="state" type="text" required />
+								</div>
+								<div class="col mb-2">
+									<label class="form-label">PinCode</label> <input
+										class="form-control" name="pincode" type="number" required />
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-6 mt-3">
+					
+						<h3 class="text-center">Payment Type</h3>
+						<hr />
+						<div class="card">
+						<div class="card-body">
+							<table class="table table-borderless ">
+								<tbody>
+									<tr>
+										<td>Total Price</td>
+										<td> : </td>
+										<td>&#8360; 59999</td>
+									</tr>
+									<tr>
+										<td>Delivery charges</td>
+										<td> : </td>
+										<td>&#8360; 99</td>
+									</tr>
+									<tr>
+										<td>Tax charges</td>
+										<td> : </td>
+										<td>&#8360; 99</td>
+									</tr>
+									<tr class="border-top">
+										<td>Total Price</td>
+										<td> : </td>
+										<td>&#8360; 59999</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						</div>
+						<div class="card shadow p-3 mt-2 bg-body-tertiary rounded">
+						<div class="card-body">
+							<form>
+								<div class="mb-3 row">
+							<label class="col ">Select Payment Type : </label>
+								<select class="form-select text-center col" aria-label="Default select example">
+								<option selected>---select---</option>
+								<option value="1">Cash on delivery</option>
+								<option value="2">card payment</option>
+								<option value="3">Three</option>
+							</select>
+							</div>
+							<button class="btn btn-primary col-md-12">Place Order</button>
+							</form>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<h1>Demo Page</h1>
+</body>
+</html>
