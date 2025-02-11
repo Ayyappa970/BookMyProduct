@@ -29,9 +29,25 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-					<li class="nav-item"><a class="nav-link active"
+					<li class="nav-item">
+						<th:block th:if="${user!=null}">
+							<th:block th:if="${user.role=='ROLE_USER'}">
+							<a class="nav-link active"
 						aria-current="page" href="/"><i class="fa-solid fa-house"></i>
-							Home</a></li>
+							Home</a>
+						</th:block>
+						<th:block th:unless="${user.role=='ROLE_USER'}">
+							<a class="nav-link active"
+						aria-current="page" href="/admin/"><i class="fa-solid fa-house"></i>
+							Home</a>
+						</th:block>
+						</th:block>
+						<th:block th:unless="${user!=null}">
+							<a class="nav-link active"
+						aria-current="page" href="/"><i class="fa-solid fa-house"></i>
+							Home</a>
+						</th:block>
+					</li>
 					<li class="nav-item"><a class="nav-link active"
 						aria-current="page" href="/products">Products</a></li>
 					<li class="nav-item dropdown"><a
@@ -51,7 +67,8 @@
 							aria-current="page" href="/register">Register</a></li>
 					</th:block>
 					<th:block th:if="${user!=null}">
-					 <th:block th:if="${countCart}>0">
+					 <th:block th:if="${user.role=='ROLE_USER'}">
+					 	<th:block th:if="${countCart}>0">
 						<li class="nav-item"><a class="nav-link active"
 							aria-current="page" href="/user/carts"><i class="fa-solid fa-cart-shopping fa-bounce"></i>
 							 Cart <span class="badge bg-white text-primary">[[${countCart}]]</span></a></li>
@@ -61,6 +78,7 @@
 							aria-current="page" href="/user/carts"><i class="fa-solid fa-cart-shopping fa-bounce"></i>
 							 Cart </a></li>
 					</th:block>
+					 </th:block>
 						<li class="nav-item">
 							<!-- <a class="nav-link active" aria-current="page">
           <img width="30" height="30" class="rounded-circle" th:src="@{'/images/user_imgs/'+${user.profileImage}}"/>
@@ -68,25 +86,40 @@
           </a> -->
 
 							<div class="dropdown">
-								<a class="nav-link active dropdown-toggle" href="#"
+								<th:block th:if="${user.role=='ROLE_USER'}">
+									<a class="nav-link active dropdown-toggle" href="/"
 									role="button" data-bs-toggle="dropdown" aria-expanded="false">
 									<img width="30" height="30" class="rounded-circle"
 									th:src="@{'/images/user_imgs/'+${user.profileImage}}" />
 									[[${user.userName}]]
 								</a>
+								</th:block>
+								<th:block th:unless="${user.role=='ROLE_USER'}">
+									<a class="nav-link active dropdown-toggle" href="/admin/"
+									role="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<i class="fa-solid fa-user"></i>
+									[[${user.userName}]]
+								</a>
+								</th:block>
 
 								<ul class="dropdown-menu">
-									<li><a class="dropdown-item" href="/admin/">Action</a></li>
-									<li><a class="dropdown-item" href="#">Another action</a></li>
-									<li><a class="dropdown-item" href="#">Something else
-											here</a></li>
+									<li><a class="dropdown-item" href="#"><i
+											class="fa-solid fa-user"></i> Profile</a></li>
+									
+										<th:block th:if="${user.role=='ROLE_USER'}"><li >
+											<a class="dropdown-item" href="/user/myOrders"><i class="fa-solid fa-box"></i> My
+											Orders</a></li>
+										</th:block>
+									
+									<li><a class="dropdown-item" href="/logout"><i
+											class="fa-solid fa-right-to-bracket"></i> Logout</a></li>
 								</ul>
 							</div>
 
 						</li>
-						<li class="nav-item"><a class="nav-link active"
-							aria-current="page" href="/logout"><i
-								class="fa-solid fa-right-to-bracket"></i> Logout</a></li>
+<!-- 						<li class="nav-item"><a class="nav-link active"
+							aria-current="page" href="/logout">
+							<i class="fa-solid fa-right-to-bracket"></i> Logout</a></li> -->
 					</th:block>
 				</ul>
 			</div>

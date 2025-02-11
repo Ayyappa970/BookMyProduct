@@ -24,11 +24,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.shoping.book_my_product.entity.Category;
 import com.shoping.book_my_product.entity.Product;
+import com.shoping.book_my_product.entity.ProductOrder;
 import com.shoping.book_my_product.entity.UserDetails;
 import com.shoping.book_my_product.service.CartService;
 import com.shoping.book_my_product.service.CategoryService;
+import com.shoping.book_my_product.service.ProductOrderService;
 import com.shoping.book_my_product.service.ProductService;
 import com.shoping.book_my_product.service.UserService;
+import com.shoping.book_my_product.util.OrderStatus;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -47,6 +50,9 @@ public class AdminController {
 	
 	@Autowired
 	private CartService cartSer;
+	
+	@Autowired
+	private ProductOrderService orderSer;
 	
 	@GetMapping("/")
 	public String index() {
@@ -205,5 +211,27 @@ public class AdminController {
 			session.setAttribute("errorMsg", "server error!");
 		}
 		return "redirect:/admin/userslist";
+	}
+	@GetMapping("/orders")
+	public String getOrders(Model model,Principal principal) {
+		List<ProductOrder> orders = orderSer.getAllOrders();
+		model.addAttribute("orders", orders);
+		return "/admin/orders";
+	}
+	@PostMapping("/updateOrderState")
+	public String updateOrderStatus(@RequestParam long id,@RequestParam Integer st,HttpSession session) {
+		OrderStatus[] values = OrderStatus.values();
+		String status=null;
+		for (OrderStatus orderSta : values) {
+			if(orderSta.getId().equals(st)) {
+				status=orderSta.getName();
+			}
+		}
+		Boolean orderStatus = orderSer.updateOrderStatus(id, status);
+		if(orderStatus) 
+			session.setAttribute("succMsg", "Order status updated");
+		else
+			session.setAttribute("errorMsg", "Something went wrong");
+		return "redirect:/admin/orders";
 	}
 }

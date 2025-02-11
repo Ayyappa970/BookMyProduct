@@ -8,13 +8,15 @@
 <body>
 	<section>
 		<div class="container mt-5 p-5">
+		<form action="/user/saveOrder" method="post">
 			<div class="row">
+			
 				<div class="col-md-6 p-3">
 				<h3 class="text-center">Shipping Details</h3>
 						<hr />
 					<div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
 						
-						<form>
+						
 							<div class="row mt-4">
 								<div class="col">
 									<label class="form-label">First Name</label> <input
@@ -38,6 +40,16 @@
 							</div>
 							<div class="row">
 								<div class="col">
+									<label class="form-label">Address</label> <input
+										class="form-control" name="address" type="text" required />
+								</div>
+								<div class="col mb-2">
+									<label class="form-label">City</label> <input
+										class="form-control" name="city" type="text" required />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
 									<label class="form-label">State</label> <input
 										class="form-control" name="state" type="text" required />
 								</div>
@@ -46,7 +58,6 @@
 										class="form-control" name="pincode" type="number" required />
 								</div>
 							</div>
-						</form>
 					</div>
 				</div>
 				<div class="col-md-6 mt-3">
@@ -60,22 +71,22 @@
 									<tr>
 										<td>Total Price</td>
 										<td> : </td>
-										<td>&#8360; 59999</td>
+										<td>&#8360; [[${orderPrice}]]</td>
 									</tr>
 									<tr>
 										<td>Delivery charges</td>
 										<td> : </td>
-										<td>&#8360; 99</td>
+										<td>&#8360; 250</td>
 									</tr>
 									<tr>
 										<td>Tax charges</td>
 										<td> : </td>
-										<td>&#8360; 99</td>
+										<td>&#8360; 100</td>
 									</tr>
 									<tr class="border-top">
 										<td>Total Price</td>
 										<td> : </td>
-										<td>&#8360; 59999</td>
+										<td>&#8360; [[${totalOrderPrice}]]</td>
 									</tr>
 								</tbody>
 							</table>
@@ -83,23 +94,24 @@
 						</div>
 						<div class="card shadow p-3 mt-2 bg-body-tertiary rounded">
 						<div class="card-body">
-							<form>
 								<div class="mb-3 row">
 							<label class="col ">Select Payment Type : </label>
-								<select class="form-select text-center col" aria-label="Default select example">
+								<select class="form-select text-center col" aria-label="Default select example" name="paymentType" required>
 								<option selected>---select---</option>
-								<option value="1">Cash on delivery</option>
-								<option value="2">card payment</option>
+								<option value="COD">Cash on delivery</option>
+								<option value="ONLINE">Online</option>
 								<option value="3">Three</option>
 							</select>
 							</div>
-							<button class="btn btn-primary col-md-12">Place Order</button>
-							</form>
+							<button class="btn btn-primary col-md-12" type="submit">Place Order</button>
+						
 						</div>
 
 					</div>
 				</div>
+					
 			</div>
+			</form>
 		</div>
 	</section>
 	<h1>Demo Page</h1>

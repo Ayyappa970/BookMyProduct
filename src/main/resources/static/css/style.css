@@ -6,3 +6,7 @@
 .card{
 	cursor: pointer;
 }
+.disabledd{
+	 opacity: 0.6;
+  cursor: not-allowed;
+}

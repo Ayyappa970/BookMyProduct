@@ -69,7 +69,9 @@
 							<th:block th:if="${user!=null}">
 								<a
 									th:href="@{'/user/addCart?pid='+${product.id}+'&uid='+${user.userId}}"
-									class="btn btn-danger col-md-12">Add To Cart</a>
+									class="btn btn-danger col-md-5">Add To Cart</a>
+									<!-- <a href="/user/order"
+									class="btn btn-success col-md-5 offset-md-1">Order now</a> -->
 							</th:block>
 						</th:block>
 						<th:block th:unless="${product.stock>0}">

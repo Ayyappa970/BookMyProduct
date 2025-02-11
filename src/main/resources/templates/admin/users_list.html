@@ -7,10 +7,13 @@
 </head>
 <body>
 	<section>
-		<div class="container-fluid p-5 mt-5 col-md-12">
+	<div class="mt-5 p-3">
+		<i class="fa-solid fa-arrow-left fa-fade text-primary"></i> <a href="/admin/" class="text-primary text-decoration-none"> Back</a>
+	</div>
+		<div class="container-fluid col-md-12">
 		<!-- <a class="btn btn-primary">User's List</a>
 		<a class="btn btn-info">Admin's List</a> -->
-			<div class="card mt-3">
+			<div class="card mb-3">
 				<div class="card-header text-center">
 					<p class="fs-4">Users List</p>
 					<th:block th:if="${session.succMsg}">

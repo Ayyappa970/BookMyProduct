@@ -28,7 +28,8 @@ public class AuthFailureHandlerImpl extends SimpleUrlAuthenticationFailureHandle
 			AuthenticationException exception) throws IOException, ServletException {
 		String email = request.getParameter("username");
 		UserDetails user = userRepo.findByEmail(email);
-		if(user.getIsEnable()) {
+		if(user!=null) {
+		if( user.getIsEnable()) {
 			if(user.getAccountNonLocked()) {
 				if(user.getFailedAttempt()<AppConstant.ATTEMPT_TIMES) {
 					userService.increaseFailedAttempt(user);
@@ -45,6 +46,9 @@ public class AuthFailureHandlerImpl extends SimpleUrlAuthenticationFailureHandle
 			}
 		}else {
 			exception=new LockedException("Your account is inactive");
+		}
+		}else {
+			exception=new LockedException("invalid email or password");
 		}
 		super.setDefaultFailureUrl("/signin?error");
 		super.onAuthenticationFailure(request, response, exception);
