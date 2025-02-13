@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -70,11 +71,23 @@ public class HomeController {
         return "register";
     }
     @GetMapping("/products")
-    public String products(Model model,@RequestParam(value = "category",defaultValue="") String category){
+    public String products(Model model,@RequestParam(value = "category",defaultValue="") String category,
+    		@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
+    		@RequestParam(name  = "pageSize",defaultValue="9") Integer pageSize){
     	model.addAttribute("categories", catSer.getActiveCategories());
     	model.addAttribute("products", proSer.getAllActiveProducts(category));
     	model.addAttribute("parmValue", category);
-        return "product";
+    	Page<Product> page = proSer.getAllActiveProductsPagination(pageNo, pageSize, category);
+    	List<Product> products = page.getContent();
+        model.addAttribute("products", products);
+        model.addAttribute("productSize", products.size());
+        model.addAttribute("pageNo", page.getNumber());
+        model.addAttribute("totalElements", page.getTotalElements());
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("isFirst", page.isFirst());
+        model.addAttribute("isLast", page.isLast());
+        model.addAttribute("pageSize", pageSize);
+    	return "product";
     }
     @GetMapping("/product/{id}")
     public String product(@PathVariable("id") int id,Model model){
@@ -169,5 +182,13 @@ public class HomeController {
 			model.addAttribute("message", "password updated successfully");
 			return "error";
 		}
+	}
+	
+	@GetMapping("/search")
+	public String searchProduct(@RequestParam String ch,Model model) {
+		List<Product> searchedProducts = proSer.searchProduct(ch);
+		model.addAttribute("products", searchedProducts);
+		model.addAttribute("productSize", searchedProducts.size());
+		return "product";
 	}
 }

@@ -7,14 +7,16 @@
 </head>
 <body>
 	<section>
-	<div class="mt-5 p-3">
-		<i class="fa-solid fa-arrow-left fa-fade text-primary"></i> <a href="/admin/" class="text-primary text-decoration-none"> Back</a>
-	</div>
+		<div class="mt-5 p-3">
+			<i class="fa-solid fa-arrow-left fa-fade text-primary"></i> <a
+				href="/admin/" class="text-primary text-decoration-none"> Back</a>
+		</div>
 		<div class="container-fluid p-3">
 			<div class="row">
 				<div class="col-md-4">
 					<div class="card">
-						<div class="card-header text-center">Add Category
+						<div class="card-header text-center">
+							Add Category
 							<th:block th:if="${session.succMsg}">
 								<p class="text-success fw-bold">[[${session.succMsg}]]</p>
 								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
@@ -25,31 +27,32 @@
 							</th:block>
 						</div>
 						<div class="card-body">
-						<form action="/admin/saveCategory" method="post" enctype="multipart/form-data">
-							<div class="mb-3">
-								<label class="form-label">Title</label> <input
-									class="form-control" type="text" name="name" />
-							</div>
-							<div class="mb-3">
-								<label class="form-label">status</label>
-								<div class="form-check">
-									<input class="form-check-input" type="radio"
-										name="isActive" id="flexRadioDefault1" checked value="true"> <label
-										class="form-check-label" for="flexRadioDefault1">
-										active </label>
+							<form action="/admin/saveCategory" method="post"
+								enctype="multipart/form-data">
+								<div class="mb-3">
+									<label class="form-label">Title</label> <input
+										class="form-control" type="text" name="name" />
 								</div>
-								<div class="form-check">
-									<input class="form-check-input" type="radio" value="false"
-										name="isActive" id="flexRadioDefault2">
-									<label class="form-check-label" for="flexRadioDefault2">
-										disable </label>
+								<div class="mb-3">
+									<label class="form-label">status</label>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="isActive"
+											id="flexRadioDefault1" checked value="true"> <label
+											class="form-check-label" for="flexRadioDefault1">
+											active </label>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" value="false"
+											name="isActive" id="flexRadioDefault2"> <label
+											class="form-check-label" for="flexRadioDefault2">
+											disable </label>
+									</div>
 								</div>
-							</div>
-							<div class="mb-3">
-								<label class="form-label">Image</label> <input
-									class="form-control" type="file" name="file" />
-							</div>
-							<button class="btn btn-primary col-md-12">Add</button>
+								<div class="mb-3">
+									<label class="form-label">Image</label> <input
+										class="form-control" type="file" name="file" />
+								</div>
+								<button class="btn btn-primary col-md-12">Add</button>
 							</form>
 						</div>
 					</div>
@@ -57,6 +60,19 @@
 				<div class="col-md-8">
 					<div class="card">
 						<div class="card-header text-center">Category Details</div>
+						<form action="/admin/searchCategory" method="get"
+							class="col-md-4 offset-md-8 mt-3">
+							<div class="input-group">
+								<input type="search" class="form-control me-1" name="ch"
+									placeholder="search Categories here" required /> <a
+									href="/admin/category"
+									class="btn text-decoration-none text-dark"><i
+									class="fa-solid fa-arrows-rotate fs-4 mt-1 me-3"></i></a>
+								<!-- <button class="btn btn-primary text-dark ms-3 col-md-2">
+								<i class="fa-solid fa-magnifying-glass"></i> Search
+							</button>  -->
+							</div>
+						</form>
 						<div class="card-body">
 							<table class="table table-hover">
 								<thead>
@@ -69,22 +85,65 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr th:each="cat,c:${categories}">
-										<th scope="row">[[${c.count}]]</th>
-										<td>[[${cat.name}]]</td>
-										<td>[[${cat.isActive}]]</td>
-										<td>
-											<img th:src="@{'/images/category_imgs/'+${cat.imageName}}" class="rounded-circle" width="50" height="50"/>
-										</td>
-										<td>
-											<a th:href="@{'/admin/edit/'+${cat.id}}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i> update</a>
-											<a th:href="@{'/admin/delete/'+${cat.id}}" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i> delete</a>
-										</td>
-									</tr>
+									<th:block th:if="${categories!=null}">
+										<tr th:each="cat,c:${categories}">
+											<th scope="row">[[${c.count}]]</th>
+											<td>[[${cat.name}]]</td>
+											<!-- <td>[[${cat.isActive}]]</td> -->
+											<th:block th:if="${cat.isActive==true}">
+												<td>Active</td>
+											</th:block>
+											<th:block th:unless="${cat.isActive==true}">
+												<td>Inactive</td>
+											</th:block>
+											<td><img
+												th:src="@{'/images/category_imgs/'+${cat.imageName}}"
+												class="rounded-circle" width="50" height="50" /></td>
+											<td><a th:href="@{'/admin/edit/'+${cat.id}}"
+												class="btn btn-sm btn-primary"><i
+													class="fa-solid fa-pen-to-square"></i> update</a> <a
+												th:href="@{'/admin/delete/'+${cat.id}}"
+												class="btn btn-sm btn-danger"><i
+													class="fa-solid fa-trash"></i> delete</a></td>
+										</tr>
+									</th:block>
+
+									</th:block>
 								</tbody>
 							</table>
+							<th:block th:unless="${categories!=null}">
+								<th:block th:if="${session.errorMs}">
+									<p class="text-danger fw-bold text-center fs-5">[[${session.errorMs}]]</p>
+									<th:block
+										th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+								</th:block>
+								</th:block>
 						</div>
 					</div>
+
+					<!-- 	<div class="row mt-3 col-md-12">
+						<div class="col offset-md-1">
+							<span>Total Categories : [[${totalElements}]]</span>
+							</div>
+							<th:block th:if="${totalElements>10}">
+							<div class="col offset-md-3">
+							<nav aria-label="Page navigation example">
+							<ul class="pagination">
+							<li class="page-item"><a th:classappend="${isFirst}?'active':''" th:href="@{'category?pageNo=0'}" class="page-link">First</a></li>
+								<li class="page-item" ><a class="page-link" th:classappend="${isFirst}?'disabled':''" th:href="@{'category?pageNo='+${pageNo-1}}"
+									aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+								</a></li>
+								<li th:classappend="${pageNo+1==i}?'active':''" th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item"><a class="page-link" th:href="@{'/category?pageNo='+${i-1}}">[[${i}]]</a></li>
+								<li class="page-item"><a class="page-link" th:classappend="${isLast}?'disabled':''" th:href="@{'category?pageNo='+${pageNo+1}}"
+									aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+								</a></li>
+								<li class="page-item"><a th:classappend="${isLast}?'active':''" th:href="@{'category?pageNo='+${totalPages-1}}" class="page-link">Last</a></li>
+							</ul>
+						</nav>
+						</div>
+						</th:block>
+					</div> -->
+
 				</div>
 
 			</div>

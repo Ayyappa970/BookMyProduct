@@ -29,7 +29,7 @@ public class ProductOrder {
 	@ManyToOne
 	private Product product;
 	private Double price;
-	private int quantity;
+	private Integer quantity;
 	@ManyToOne
 	private UserDetails user;
 	private String status;

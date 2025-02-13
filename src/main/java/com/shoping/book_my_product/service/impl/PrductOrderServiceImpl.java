@@ -1,7 +1,6 @@
 package com.shoping.book_my_product.service.impl;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +15,7 @@ import com.shoping.book_my_product.entity.ProductOrder;
 import com.shoping.book_my_product.repository.CartRepository;
 import com.shoping.book_my_product.repository.ProductOrderRepository;
 import com.shoping.book_my_product.service.ProductOrderService;
+import com.shoping.book_my_product.util.CommonUtil;
 import com.shoping.book_my_product.util.OrderStatus;
 @Service
 public class PrductOrderServiceImpl implements ProductOrderService {
@@ -25,8 +25,11 @@ public class PrductOrderServiceImpl implements ProductOrderService {
 	@Autowired
 	private CartRepository cartRepo;
 	
+	@Autowired
+	private CommonUtil commonUtil;
+	
 	@Override
-	public void saveOrder(long userId,OrderRequestDto orRequestDto) {
+	public void saveOrder(long userId,OrderRequestDto orRequestDto) throws Exception {
 		List<Cart> carts = cartRepo.findByUserUserId(userId);
 		for(Cart cart:carts) {
 			ProductOrder order=new ProductOrder();
@@ -51,7 +54,8 @@ public class PrductOrderServiceImpl implements ProductOrderService {
 			
 			order.setOrderAddress(address);
 			
-			orderRepo.save(order);
+			ProductOrder save = orderRepo.save(order);
+			commonUtil.sendEmailForProductOrder(save, "Success");
 		}
 	}
 
@@ -62,19 +66,23 @@ public class PrductOrderServiceImpl implements ProductOrderService {
 	}
 
 	@Override
-	public Boolean updateOrderStatus(long id, String status) {
+	public ProductOrder updateOrderStatus(long id, String status) {
 		ProductOrder productOrder = orderRepo.findById(id).get();
 		if(!ObjectUtils.isEmpty(productOrder)) {
 			productOrder.setStatus(status);
-			orderRepo.save(productOrder);
-			return true;
+			return orderRepo.save(productOrder);
 		}
-		return false;
+		return null;
 	}
 
 	@Override
 	public List<ProductOrder> getAllOrders() {
 		return orderRepo.findAll();
+	}
+
+	@Override
+	public ProductOrder searchOrder(String orderId) {
+		return orderRepo.findByOrderId(orderId.trim());
 	}
 
 }

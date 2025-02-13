@@ -25,6 +25,19 @@
 								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
 							</th:block>
 				</div>
+				<form action="/admin/searchUser" method="get"
+							class="col-md-4 offset-md-8 mt-3">
+							<div class="input-group">
+								<input type="search" class="form-control me-1" name="ch"
+									placeholder="search user by email id" required /> <a
+									href="/admin/userslist"
+									class="btn text-decoration-none text-dark"><i
+									class="fa-solid fa-arrows-rotate fs-4 mt-1 me-3"></i></a>
+								<!-- <button class="btn btn-primary text-dark ms-3 col-md-2">
+								<i class="fa-solid fa-magnifying-glass"></i> Search
+							</button>  -->
+							</div>
+						</form>
 				<div class="card-body">
 					<table class="table table-striped">
 						<thead>
@@ -42,6 +55,7 @@
 							</tr>
 						</thead>
 						<tbody>
+						<th:block th:if="${users!=null}">
 							<tr th:each="user,u:${users}">
 								<th scope="row">[[${u.count}]]</th>
 								<td>[[${user.userName}]]</td>
@@ -60,9 +74,16 @@
 									<a th:href="@{'/admin/updateStatus?status=false&id='+${user.userId}}" class="btn btn-sm btn-danger" >Inactive</a> 
 								</td>
 							</tr>
-							
+							</th:block>
 						</tbody>
 					</table>
+					<th:block th:unless="${users!=null}">
+								<th:block th:if="${session.errorMs}">
+									<p class="text-danger fw-bold text-center fs-5">[[${session.errorMs}]]</p>
+									<th:block
+										th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+								</th:block>
+								</th:block>
 				</div>
 			</div>
 		</div>

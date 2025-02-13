@@ -10,6 +10,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,6 +97,29 @@ public class ProductServiceImpl implements ProductService {
 			products=productRepo.findByCategory(category);
 		}
 		return products;
+	}
+
+	@Override
+	public List<Product> searchProduct(String ch) {
+		return productRepo.findBypNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch, ch);
+	}
+
+	@Override
+	public Page<Product> getAllActiveProductsPagination(Integer pageNo, Integer pageSize,String category) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Page<Product> pageProducts=null;
+		if(ObjectUtils.isEmpty(category)) {
+			pageProducts=productRepo.findByIsActiveTrue(pageable);
+		}else {
+			pageProducts=productRepo.findByCategory(pageable,category);
+		}
+		return pageProducts;
+	}
+
+	@Override
+	public Page<Product> getAllProductsPagination(Integer pageNo, Integer pageSize) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		return productRepo.findAll(pageable);
 	}
 
 }

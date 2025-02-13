@@ -10,18 +10,22 @@
 		<div class="container-fluid bg-primary p-5 mt-5 ">
 			<div class="row">
 				<div class="col-md-8 offset-md-2">
-					<form>
+					<form action="search" method="get">
 						<div class="input-group">
-							<input type="text" class="form-control" name="ch" />
-							<button class="btn btn-light text-dark ms-3 col-md-2">
+							<input type="search" class="form-control" name="ch" placeholder="search products here" required/>
+							<a
+							href="/products"
+							class="btn text-decoration-none text-light"><i
+							class="fa-solid fa-arrows-rotate fs-4 mt-1 me-3"></i></a>
+							<!-- <button class="btn btn-light text-dark ms-3 col-md-2">
 								<i class="fa-solid fa-magnifying-glass"></i> Search
-							</button>
+							</button>  -->
 						</div>
 					</form>
 				</div>
 			</div>
 		</div>
-		<div class="container-fluid mt-2" >
+		<div class="container-fluid mt-2 mb-2" >
 			<div class="row">
 				<div class="col-md-2">
 				<div class="card shadow p-0 bg-body-tertiary rounded">
@@ -39,14 +43,14 @@
 						<div class="card-body">
 							<p class="text-center fs-3">Products</p>
 							<div class="row">
-							<th:block th:if="${products.size>0}">
+							<th:block th:if="${productSize>0}">
 								<div class="col-md-3 mt-2" th:each="p:${products}">
 									<div class="card" style="box-shadow: 2px 5px 10px grey">
 										<div class="card-body shadow p-3 bg-body-tertiary rounded">
 											<img th:src="@{'/images/product_imgs/'+${p.image}}" alt="error" width="100%" height="220" class="rounded"/>
 											<p class="fs-5 text-center mt-2">[[${p.pName}]]</p>
 											<div class="row text-center">
-												<p class="fs-6 fw-bold">&#8377;<span> [[${p.discountPrice}]]</span><br/>&#8377; <span class="text-decoration-line-through text-secondary">[[${p.price}]]</span>    
+												<p class="fs-6 fw-bold">&#8377;<span> [[${p.discountPrice}]]</span><br/><span class="text-decoration-line-through text-secondary">&#8377; [[${p.price}]]</span>    
 												<span class="fs-6 text-success">  [[${p.discount}]]% off</span> </p> 
 												<a th:href="@{'/product/'+${p.id}}" class="btn btn-primary col-md-6 offset-md-3">View Details</a>
 											</div>
@@ -54,12 +58,34 @@
 									</div>
 								</div>
 								</th:block>
-								<th:block th:unless="${products.size}>0">
+								<th:block th:unless="${productSize>0}">
 									<p class="fs-4 text-center mt-3 text-danger">Products Not Available !</p>
 								</th:block>
 							</div>
 						</div>
 					</div>
+					<!-- <th:block th:if="${productSize}>0">
+						<div class="row mt-3 col-md-12">
+						<div class="col offset-md-1">
+							<span>Total Products : [[${totalElements}]]</span>
+							</div>
+							<div class="col offset-md-3">
+							<nav aria-label="Page navigation example">
+							<ul class="pagination">
+							<li class="page-item"><a th:classappend="${isFirst}?'active':''" th:href="@{'products?pageNo=0'}" class="page-link">First</a></li>
+								<li class="page-item" ><a class="page-link" th:classappend="${isFirst}?'disabled':''" th:href="@{'products?pageNo='+${pageNo-1}}"
+									aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+								</a></li>
+								<li th:classappend="${pageNo+1==i}?'active':''" th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item"><a class="page-link" th:href="@{'/products?pageNo='+${i-1}}">[[${i}]]</a></li>
+								<li class="page-item"><a class="page-link" th:classappend="${isLast}?'disabled':''" th:href="@{'products?pageNo='+${pageNo+1}}"
+									aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+								</a></li>
+								<li class="page-item"><a th:classappend="${isLast}?'active':''" th:href="@{'products?pageNo='+${totalPages-1}}" class="page-link">Last</a></li>
+							</ul>
+						</nav>
+						</div>
+					</div>
+					</th:block> -->
 				</div>
 			</div>
 		</div>

@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.shoping.book_my_product.dto.OrderRequestDto;
 import com.shoping.book_my_product.entity.Cart;
@@ -22,9 +24,12 @@ import com.shoping.book_my_product.service.CartService;
 import com.shoping.book_my_product.service.CategoryService;
 import com.shoping.book_my_product.service.ProductOrderService;
 import com.shoping.book_my_product.service.UserService;
+import com.shoping.book_my_product.util.CommonUtil;
 import com.shoping.book_my_product.util.OrderStatus;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 @RequestMapping("/user")
@@ -41,6 +46,12 @@ public class UserController {
 	
 	@Autowired
 	private ProductOrderService orderSer;
+	
+	@Autowired
+	private CommonUtil commonUtil;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@GetMapping("/")
 	public String home() {
@@ -110,7 +121,7 @@ public class UserController {
 	
 	
 	@PostMapping("/saveOrder")
-	public String saveOrder(@ModelAttribute OrderRequestDto request,Principal principal) {
+	public String saveOrder(@ModelAttribute OrderRequestDto request,Principal principal) throws Exception{
 		//System.out.println(orderDto);
 		orderSer.saveOrder(getLoggedInUserDetails(principal).getUserId(), request);
 		return "redirect:/user/successPage";
@@ -134,11 +145,54 @@ public class UserController {
 				status=orderSta.getName();
 			}
 		}
-		Boolean orderStatus = orderSer.updateOrderStatus(id, status);
-		if(orderStatus) 
+		ProductOrder orderStatus = orderSer.updateOrderStatus(id, status);
+		try {
+			commonUtil.sendEmailForProductOrder(orderStatus, status);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if(!ObjectUtils.isEmpty(orderStatus)) 
 			session.setAttribute("succMsg", "Order status updated");
 		else
 			session.setAttribute("errorMsg", "Something went wrong");
 		return "redirect:/user/myOrders";
 	}
+	@GetMapping("/profile")
+	public String profile(Principal principal,Model model) {
+		UserDetails user= getLoggedInUserDetails(principal);
+		model.addAttribute("user", user);
+		return "/user/profile";
+	}
+	
+	@PostMapping("/updateProfile")
+	public String updateProfile(@ModelAttribute UserDetails user,@RequestParam MultipartFile img,HttpSession session) {
+		UserDetails details = userService.updateUserProfile(user, img);
+		if(ObjectUtils.isEmpty(details)) {
+			session.setAttribute("errorMsg", "Internal error");
+		}else {
+			session.setAttribute("succMsg", "Profile updated Successfully");
+		}
+		return "redirect:/user/profile";
+	}
+	
+	@PostMapping("/changePassword")
+	public String changePassword(@RequestParam String newPass,@RequestParam String oldPass,Principal principal,HttpSession session) {
+		UserDetails details = getLoggedInUserDetails(principal);
+		boolean matches = passwordEncoder.matches(oldPass, details.getPassword());
+		if(matches) {
+			String encodeNew = passwordEncoder.encode(newPass);
+			details.setPassword(encodeNew);
+			UserDetails updateUser = userService.updateUserDetailsByPassword(details);
+			if(!ObjectUtils.isEmpty(updateUser)) {
+				session.setAttribute("succMs", "Password updated Successfully");
+			}else {
+				session.setAttribute("errorMs", "Somethig went wrong");
+			}
+			
+		}else {
+			session.setAttribute("errorMs", "Incorrect password");
+		}
+		return "redirect:/user/profile";
+	}
+	
 }

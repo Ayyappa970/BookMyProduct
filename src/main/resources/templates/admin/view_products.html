@@ -7,22 +7,36 @@
 </head>
 <body>
 	<section>
-	<div class="mt-5 p-3">
-		<i class="fa-solid fa-arrow-left fa-fade text-primary"></i> <a href="/admin/" class="text-primary text-decoration-none"> Back</a>
-	</div>
+		<div class="mt-5 p-3">
+			<i class="fa-solid fa-arrow-left fa-fade text-primary"></i> <a
+				href="/admin/" class="text-primary text-decoration-none"> Back</a>
+		</div>
 		<div class="container-fluid p-3 col-md-12">
 			<div class="card">
 				<div class="card-header text-center">
 					<p class="fs-4">View Product</p>
 					<th:block th:if="${session.succMsg}">
-								<p class="text-success fw-bold">[[${session.succMsg}]]</p>
-								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
-							</th:block>
-							<th:block th:if="${session.errorMsg}">
-								<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
-								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
-							</th:block>
+						<p class="text-success fw-bold">[[${session.succMsg}]]</p>
+						<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+					</th:block>
+					<th:block th:if="${session.errorMsg}">
+						<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+						<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+					</th:block>
 				</div>
+				<form action="searchProduct" method="get"
+					class="col-md-4 offset-md-8 mt-3">
+					<div class="input-group">
+						<input type="search" class="form-control me-1" name="ch"
+							placeholder="search products here" required /> <a
+							href="/admin/viewProduct"
+							class="btn text-decoration-none text-dark"><i
+							class="fa-solid fa-arrows-rotate fs-4 mt-1 me-3"></i></a>
+						<!-- <button class="btn btn-primary text-dark ms-3 col-md-2">
+								<i class="fa-solid fa-magnifying-glass"></i> Search
+							</button>  -->
+					</div>
+				</form>
 				<div class="card-body">
 					<table class="table table-striped">
 						<thead>
@@ -41,29 +55,69 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:each="pro,p:${products}">
-								<th scope="row">[[${p.count}]]</th>
-								<td>[[${pro.pName}]]</td>
-								<td>[[${pro.description}]]</td>
-								<td>
-									<img th:src="@{'/images/product_imgs/'+${pro.image}}" width="50" height="50" class="rounded-circle"/>
-								</td>
-								<td>[[${pro.price}]]</td>
-								<td>[[${pro.discount}]] %</td>
-								<td>[[${pro.discountPrice}]]</td>
-								<td>[[${pro.isActive}]]</td>
-								<td>[[${pro.category}]]</td>
-								<td>[[${pro.stock}]]</td>
-								<td>
-									<a th:href="@{'/admin/editProduct/'+${pro.id}}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i> edit</a>
-									<a th:href="@{'/admin/deleteProduct/'+${pro.id}}" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i> delete</a>
-								</td>
-							</tr>
-							
+							<th:block th:if="${products!=null}">
+								<tr th:each="pro,p:${products}">
+									<th scope="row">[[${p.count}]]</th>
+									<td>[[${pro.pName}]]</td>
+									<td>[[${pro.description}]]</td>
+									<td><img th:src="@{'/images/product_imgs/'+${pro.image}}"
+										width="50" height="50" class="rounded-circle" /></td>
+									<td>[[${pro.price}]]</td>
+									<td>[[${pro.discount}]] %</td>
+									<td>[[${pro.discountPrice}]]</td>
+									<!-- <td>[[${pro.isActive}]]</td> -->
+									<th:block th:if="${pro.isActive==true}">
+												<td>Active</td>
+											</th:block>
+											<th:block th:unless="${pro.isActive==true}">
+												<td>Inactive</td>
+											</th:block>
+									<td>[[${pro.category}]]</td>
+									<td>[[${pro.stock}]]</td>
+									<td><a th:href="@{'/admin/editProduct/'+${pro.id}}"
+										class="btn btn-sm btn-primary"><i
+											class="fa-solid fa-pen-to-square"></i> edit</a> <a
+										th:href="@{'/admin/deleteProduct/'+${pro.id}}"
+										class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i>
+											delete</a></td>
+								</tr>
+							</th:block>
+
 						</tbody>
+
 					</table>
+					<th:block th:unless="${products!=null}">
+						<th:block th:if="${session.errorMs}">
+							<p class="text-danger fw-bold text-center fs-5">[[${session.errorMs}]]</p>
+							<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+						</th:block>
+					</th:block>
 				</div>
 			</div>
+			<!-- <th:block>
+				<div class="row mt-3 col-md-12">
+						<div class="col offset-md-1">
+							<span>Total Products : [[${totalElements}]]</span>
+							</div>
+							<th:block th:if="${totalElements>2}">
+							<div class="col offset-md-3">
+							<nav aria-label="Page navigation example">
+							<ul class="pagination">
+							<li class="page-item"><a th:classappend="${isFirst}?'active':''" th:href="@{'products?pageNo=0'}" class="page-link">First</a></li>
+								<li class="page-item" ><a class="page-link" th:classappend="${isFirst}?'disabled':''" th:href="@{'products?pageNo='+${pageNo-1}}"
+									aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+								</a></li>
+								<li th:classappend="${pageNo+1==i}?'active':''" th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item"><a class="page-link" th:href="@{'/products?pageNo='+${i-1}}">[[${i}]]</a></li>
+								<li class="page-item"><a class="page-link" th:classappend="${isLast}?'disabled':''" th:href="@{'products?pageNo='+${pageNo+1}}"
+									aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+								</a></li>
+								<li class="page-item"><a th:classappend="${isLast}?'active':''" th:href="@{'products?pageNo='+${totalPages-1}}" class="page-link">Last</a></li>
+							</ul>
+						</nav>
+						</div>
+						</th:block>
+					</div>
+			</th:block> -->
 		</div>
 	</section>
 </body>

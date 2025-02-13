@@ -103,12 +103,19 @@
 								</th:block>
 
 								<ul class="dropdown-menu">
-									<li><a class="dropdown-item" href="#"><i
+								<th:block th:if="${user.role=='ROLE_USER'}">
+									<li><a class="dropdown-item" href="/user/profile"><i
 											class="fa-solid fa-user"></i> Profile</a></li>
 									
-										<th:block th:if="${user.role=='ROLE_USER'}"><li >
+										<li >
 											<a class="dropdown-item" href="/user/myOrders"><i class="fa-solid fa-box"></i> My
 											Orders</a></li>
+										</th:block>
+										<th:block th:unless="${user.role=='ROLE_USER'}">
+										<li><a class="dropdown-item" href="/admin/profile"><i
+											class="fa-solid fa-user"></i> Profile</a></li>
+									
+										<li >
 										</th:block>
 									
 									<li><a class="dropdown-item" href="/logout"><i

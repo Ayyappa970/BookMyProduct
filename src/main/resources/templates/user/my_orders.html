@@ -25,6 +25,7 @@
 								<thead>
 									<tr>
 										<th scope="col">Order Id</th>
+										<th scope="col">Delivery Details</th>
 										<th scope="col">Date</th>
 										<th scope="col">Product Details</th>
 										<th scope="col">Price Details</th>
@@ -35,6 +36,15 @@
 								<tbody>
 									<tr th:each="o:${orders}">
 										<th scope="row">[[${o.orderId}]]</th>
+										<td>
+										<span>Name : [[${o.orderAddress.firstName+' '+o.orderAddress.lastName}]]</span><br/>
+										<span>Email : [[${o.orderAddress.email}]]</span><br/>
+										<span>Mobile Number : [[${o.user.mobileNumber}]]</span><br/>
+										<span>Address : [[${o.orderAddress.address}]], </span>
+										<span>[[${o.orderAddress.city}]], </span>
+										<span>[[${o.orderAddress.state}]], </span>
+										<span>[[${o.orderAddress.pincode}]]</span>
+										</td>
 										<td>[[${o.orderDate}]]</td>
 										<td>
 											<p>[[${o.product.pName}]] ,</p>

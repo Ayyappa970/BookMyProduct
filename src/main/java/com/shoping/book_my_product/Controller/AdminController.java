@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -31,6 +33,7 @@ import com.shoping.book_my_product.service.CategoryService;
 import com.shoping.book_my_product.service.ProductOrderService;
 import com.shoping.book_my_product.service.ProductService;
 import com.shoping.book_my_product.service.UserService;
+import com.shoping.book_my_product.util.CommonUtil;
 import com.shoping.book_my_product.util.OrderStatus;
 
 import jakarta.servlet.http.HttpSession;
@@ -54,6 +57,12 @@ public class AdminController {
 	@Autowired
 	private ProductOrderService orderSer;
 	
+	@Autowired
+	private CommonUtil commonUtil;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	@GetMapping("/")
 	public String index() {
 		return "admin/index";
@@ -65,8 +74,18 @@ public class AdminController {
 		return "admin/addProduct";
 	}
 	@GetMapping("/category")
-	public String category(Model model) {
-		model.addAttribute("categories", categoryService.getAllCategory());
+	public String category(Model model,@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
+    		@RequestParam(name  = "pageSize",defaultValue="5") Integer pageSize) {
+		//model.addAttribute("categories", categoryService.getAllCategory());
+		Page<Category> page = categoryService.getAllCategoriesPagination(pageNo, pageSize);
+		List<Category> categories = page.getContent();
+        model.addAttribute("categories", categories);
+        model.addAttribute("pageNo", page.getNumber());
+        model.addAttribute("totalElements", page.getTotalElements());
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("isFirst", page.isFirst());
+        model.addAttribute("isLast", page.isLast());
+        model.addAttribute("pageSize", pageSize);
 		return "admin/category";
 	}
 	
@@ -126,7 +145,8 @@ public class AdminController {
 		}else {
 			session.setAttribute("errorMsg", "error occured");
 		}
-		return "redirect:/admin/edit/"+category.getId();
+		//return "redirect:/admin/edit/"+category.getId();
+		return "redirect:/admin/category";
 	}
 
 	
@@ -147,11 +167,22 @@ public class AdminController {
 		}else{
 			session.setAttribute("errorMsg", "server error");
 		}
-		return "redirect:/admin/addProduct";
+		return "redirect:/admin/viewProduct";
 	}
 	@GetMapping("/viewProduct")
-	public String viewProduct(Model model) {
-		model.addAttribute("products", prService.getAllProducts());
+	public String viewProduct(Model model,@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
+    		@RequestParam(name  = "pageSize",defaultValue="9") Integer pageSize) {
+		//model.addAttribute("products", prService.getAllProducts());
+		Page<Product> page = prService.getAllProductsPagination(pageNo, pageSize);
+    	List<Product> products = page.getContent();
+        model.addAttribute("products", products);
+        model.addAttribute("productSize", products.size());
+        model.addAttribute("pageNo", page.getNumber());
+        model.addAttribute("totalElements", page.getTotalElements());
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("isFirst", page.isFirst());
+        model.addAttribute("isLast", page.isLast());
+        model.addAttribute("pageSize", pageSize);
 		return "admin/view_products";
 	}
 	@GetMapping("/deleteProduct/{id}")
@@ -180,7 +211,7 @@ public class AdminController {
 			else
 				session.setAttribute("errorMsg", "server error!");
 		}
-		return "redirect:/admin/editProduct/"+product.getId();
+		return "redirect:/admin/viewProduct";
 	}
 	
 	/* Users department */
@@ -227,11 +258,100 @@ public class AdminController {
 				status=orderSta.getName();
 			}
 		}
-		Boolean orderStatus = orderSer.updateOrderStatus(id, status);
-		if(orderStatus) 
+		ProductOrder orderStatus = orderSer.updateOrderStatus(id, status);
+		try {
+			commonUtil.sendEmailForProductOrder(orderStatus, status);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if(!ObjectUtils.isEmpty(orderStatus)) 
 			session.setAttribute("succMsg", "Order status updated");
 		else
 			session.setAttribute("errorMsg", "Something went wrong");
 		return "redirect:/admin/orders";
+	}
+	@GetMapping("/profile")
+	public String profile() {
+		return "/admin/profile";
+	}
+	@PostMapping("/updateProfile")
+	public String updateProfile(@ModelAttribute UserDetails user,@RequestParam MultipartFile img,HttpSession session) {
+		UserDetails details = userService.updateUserProfile(user, img);
+		if(ObjectUtils.isEmpty(details)) {
+			session.setAttribute("errorMsg", "Internal error");
+		}else {
+			session.setAttribute("succMsg", "Profile updated Successfully");
+		}
+		return "redirect:/admin/profile";
+	}
+	private UserDetails getLoggedInUserDetails(Principal principal) {
+		String email = principal.getName();
+		UserDetails userDetails = userService.getUserByEmail(email);
+		return userDetails;
+	}
+	@PostMapping("/changePassword")
+	public String changePassword(@RequestParam String newPass,@RequestParam String oldPass,Principal principal,HttpSession session) {
+		UserDetails details = getLoggedInUserDetails(principal);
+		boolean matches = passwordEncoder.matches(oldPass, details.getPassword());
+		if(matches) {
+			String encodeNew = passwordEncoder.encode(newPass);
+			details.setPassword(encodeNew);
+			UserDetails updateUser = userService.updateUserDetailsByPassword(details);
+			if(!ObjectUtils.isEmpty(updateUser)) {
+				session.setAttribute("succMs", "Password updated Successfully");
+			}else {
+				session.setAttribute("errorMs", "Somethig went wrong");
+			}
+			
+		}else {
+			session.setAttribute("errorMs", "Incorrect password");
+		}
+		return "redirect:/admin/profile";
+	}
+	
+	@GetMapping("/searchOrder")
+	public String searchOrder(@RequestParam String orderId,Model model,HttpSession session) {
+		ProductOrder searchOrder = orderSer.searchOrder(orderId);
+		if(ObjectUtils.isEmpty(searchOrder)) {
+			if(orderId.length()>0) {
+				session.setAttribute("errorMs", "Invalid Order Id");
+			}else {
+				model.addAttribute("orders", searchOrder);
+				return "redirect:/admin/orders";
+			}
+		}else {
+			model.addAttribute("orders", searchOrder);
+		}
+		return "/admin/orders";
+	}
+	@GetMapping("/searchProduct")
+	public String searchProduct(@RequestParam String ch,Model model,HttpSession session) {
+		List<Product> searchedProducts = prService.searchProduct(ch);
+		if(ObjectUtils.isEmpty(searchedProducts)) {
+			session.setAttribute("errorMs", "No Product Found");
+		}else {
+			model.addAttribute("products", searchedProducts);
+		}
+		return "admin/view_products";
+	}
+	@GetMapping("/searchCategory")
+	public String searchCategory(@RequestParam String ch,Model model,HttpSession session) {
+		List<Category> categories = categoryService.searchProduct(ch);
+		if(ObjectUtils.isEmpty(categories)) {
+			session.setAttribute("errorMs", "No category found");
+		}else {
+			model.addAttribute("categories", categories);
+		}
+		return "admin/category";
+	}
+	@GetMapping("/searchUser")
+	public String searchUser(@RequestParam String ch,Model model,HttpSession session) {
+		List<UserDetails> userByEmail = userService.searchUser(ch);
+		if(ObjectUtils.isEmpty(userByEmail)) {
+			session.setAttribute("errorMs", "No user found by email id");
+		}else {
+			model.addAttribute("users", userByEmail);
+		}
+		return "admin/users_list";
 	}
 }

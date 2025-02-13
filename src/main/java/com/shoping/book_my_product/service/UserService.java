@@ -2,6 +2,9 @@ package com.shoping.book_my_product.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
+
 import com.shoping.book_my_product.entity.UserDetails;
 
 public interface UserService {
@@ -16,4 +19,6 @@ public interface UserService {
 	public void updateUserResetToken(String email, String restToken);
 	public UserDetails getUserByToken(String token);
 	public UserDetails updateUserDetailsByPassword(UserDetails user);
+	public UserDetails updateUserProfile(UserDetails user,MultipartFile img);
+	public List<UserDetails> searchUser(String ch);
 }

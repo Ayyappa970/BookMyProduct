@@ -17,6 +17,9 @@ public class CommonServiceImpl implements CommonService {
 		HttpSession session = request.getSession();
 		session.removeAttribute("succMsg");
 		session.removeAttribute("errorMsg");
+		session.removeAttribute("succMs");
+		session.removeAttribute("errorMs");
 	}
+	
 
 }

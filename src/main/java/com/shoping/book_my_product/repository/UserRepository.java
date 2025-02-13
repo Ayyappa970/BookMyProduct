@@ -12,4 +12,6 @@ public interface UserRepository extends JpaRepository<UserDetails, Long> {
 	public List<UserDetails> findByRole(String role);
 	
 	public UserDetails findByResetToken(String token);
+	
+	public List<UserDetails> findByEmailContainingIgnoreCase(String ch);
 }
