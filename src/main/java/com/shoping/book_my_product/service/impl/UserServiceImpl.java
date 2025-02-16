@@ -10,6 +10,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -149,6 +152,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserDetails> searchUser(String ch) {
 		return userRepo.findByEmailContainingIgnoreCase(ch);
+	}
+
+	@Override
+	public Page<UserDetails> getAllUsersPagination(Integer pageNo, Integer pageSize) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		return userRepo.findAll(pageable);
 	}
 
 }

@@ -33,7 +33,7 @@
 					<div class="list-group">
 						<p>Categories</p>
 						<a href="/products" class="list-group-item list-group-item-action" aria-current="true" th:classappend="${parmValue==''}?'active':''">All</a>
-						<a th:each="c:${categoryes}" th:href="@{'/products?category='+${c.name}}" class="list-group-item list-group-item-action" aria-current="true" th:classappend="${parmValue==c.name}?'active':''">[[${c.name}]]</a>
+						<a th:each="c:${categories}" th:href="@{'/products?category='+${c.name}}" class="list-group-item list-group-item-action" aria-current="true" th:classappend="${parmValue==c.name}?'active':''">[[${c.name}]]</a>
 					</div>
 					</div>
 				</div>
@@ -45,6 +45,7 @@
 							<div class="row">
 							<th:block th:if="${productSize>0}">
 								<div class="col-md-3 mt-2" th:each="p:${products}">
+								<th:block th:if="${p.isActive==true}">
 									<div class="card" style="box-shadow: 2px 5px 10px grey">
 										<div class="card-body shadow p-3 bg-body-tertiary rounded">
 											<img th:src="@{'/images/product_imgs/'+${p.image}}" alt="error" width="100%" height="220" class="rounded"/>
@@ -56,6 +57,7 @@
 											</div>
 										</div>
 									</div>
+									</th:block>
 								</div>
 								</th:block>
 								<th:block th:unless="${productSize>0}">
@@ -64,10 +66,10 @@
 							</div>
 						</div>
 					</div>
-					<!-- <th:block th:if="${productSize}>0">
+					<th:block th:if="${productSize}>0">
 						<div class="row mt-3 col-md-12">
 						<div class="col offset-md-1">
-							<span>Total Products : [[${totalElements}]]</span>
+							<span>Total Products : [[${totalElement}]]</span>
 							</div>
 							<div class="col offset-md-3">
 							<nav aria-label="Page navigation example">
@@ -85,7 +87,7 @@
 						</nav>
 						</div>
 					</div>
-					</th:block> -->
+					</th:block>
 				</div>
 			</div>
 		</div>

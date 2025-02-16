@@ -75,7 +75,7 @@ public class AdminController {
 	}
 	@GetMapping("/category")
 	public String category(Model model,@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
-    		@RequestParam(name  = "pageSize",defaultValue="5") Integer pageSize) {
+    		@RequestParam(name  = "pageSize",defaultValue="3") Integer pageSize) {
 		//model.addAttribute("categories", categoryService.getAllCategory());
 		Page<Category> page = categoryService.getAllCategoriesPagination(pageNo, pageSize);
 		List<Category> categories = page.getContent();
@@ -171,7 +171,7 @@ public class AdminController {
 	}
 	@GetMapping("/viewProduct")
 	public String viewProduct(Model model,@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
-    		@RequestParam(name  = "pageSize",defaultValue="9") Integer pageSize) {
+    		@RequestParam(name  = "pageSize",defaultValue="4") Integer pageSize) {
 		//model.addAttribute("products", prService.getAllProducts());
 		Page<Product> page = prService.getAllProductsPagination(pageNo, pageSize);
     	List<Product> products = page.getContent();
@@ -229,8 +229,19 @@ public class AdminController {
 		model.addAttribute("categoryes", categories);
 	}
 	@GetMapping("/userslist")
-	public String users(Model model) {
-		model.addAttribute("users", userService.getAllUsers("ROLE_USER"));
+	public String users(Model model,@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
+    		@RequestParam(name  = "pageSize",defaultValue="3") Integer pageSize) {
+		//model.addAttribute("users", userService.getAllUsers("ROLE_USER"));
+		Page<UserDetails> page = userService.getAllUsersPagination(pageNo, pageSize);
+    	List<UserDetails> users = page.getContent();
+        model.addAttribute("users", users);
+       // model.addAttribute("usersCount", users.size());
+        model.addAttribute("pageNo", page.getNumber());
+        model.addAttribute("totalElements", page.getTotalElements());
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("isFirst", page.isFirst());
+        model.addAttribute("isLast", page.isLast());
+        model.addAttribute("pageSize", pageSize);
 		return "admin/users_list";
 	}
 	@GetMapping("/updateStatus")
@@ -244,9 +255,20 @@ public class AdminController {
 		return "redirect:/admin/userslist";
 	}
 	@GetMapping("/orders")
-	public String getOrders(Model model,Principal principal) {
-		List<ProductOrder> orders = orderSer.getAllOrders();
-		model.addAttribute("orders", orders);
+	public String getOrders(Model model,Principal principal,@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
+    		@RequestParam(name  = "pageSize",defaultValue="3") Integer pageSize) {
+//		List<ProductOrder> orders = orderSer.getAllOrders();
+//		model.addAttribute("orders", orders);
+		Page<ProductOrder> page = orderSer.getAllOrderedProductsPagination(pageNo, pageSize);
+    	List<ProductOrder> orders = page.getContent();
+        model.addAttribute("orders", orders);
+        model.addAttribute("orderSize", orders.size());
+        model.addAttribute("pageNo", page.getNumber());
+        model.addAttribute("totalElements", page.getTotalElements());
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("isFirst", page.isFirst());
+        model.addAttribute("isLast", page.isLast());
+        model.addAttribute("pageSize", pageSize);
 		return "/admin/orders";
 	}
 	@PostMapping("/updateOrderState")

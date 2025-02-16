@@ -73,16 +73,16 @@ public class HomeController {
     @GetMapping("/products")
     public String products(Model model,@RequestParam(value = "category",defaultValue="") String category,
     		@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
-    		@RequestParam(name  = "pageSize",defaultValue="9") Integer pageSize){
+    		@RequestParam(name  = "pageSize",defaultValue="4") Integer pageSize){
     	model.addAttribute("categories", catSer.getActiveCategories());
-    	model.addAttribute("products", proSer.getAllActiveProducts(category));
+    	//model.addAttribute("products", proSer.getAllActiveProducts(category));
     	model.addAttribute("parmValue", category);
     	Page<Product> page = proSer.getAllActiveProductsPagination(pageNo, pageSize, category);
     	List<Product> products = page.getContent();
         model.addAttribute("products", products);
         model.addAttribute("productSize", products.size());
         model.addAttribute("pageNo", page.getNumber());
-        model.addAttribute("totalElements", page.getTotalElements());
+        model.addAttribute("totalElement", page.getTotalElements());
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("isFirst", page.isFirst());
         model.addAttribute("isLast", page.isLast());

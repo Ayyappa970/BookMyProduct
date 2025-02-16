@@ -109,6 +109,28 @@
 					</div>
 				</div>
 			</div>
+			<div class="row mt-3 col-md-12">
+						<div class="col offset-md-1">
+							<span>Total Orders : [[${totalElements}]]</span>
+							</div>
+							<th:block th:if="${totalElements>1}">
+							<div class="col offset-md-3">
+							<nav aria-label="Page navigation example">
+							<ul class="pagination">
+							<li class="page-item"><a th:classappend="${isFirst}?'active':''" th:href="@{'orders?pageNo=0'}" class="page-link">First</a></li>
+								<li class="page-item" ><a class="page-link" th:classappend="${isFirst}?'disabled':''" th:href="@{'orders?pageNo='+${pageNo-1}}"
+									aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+								</a></li>
+								<li th:classappend="${pageNo+1==i}?'active':''" th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item"><a class="page-link" th:href="@{'/admin/orders?pageNo='+${i-1}}">[[${i}]]</a></li>
+								<li class="page-item"><a class="page-link" th:classappend="${isLast}?'disabled':''" th:href="@{'orders?pageNo='+${pageNo+1}}"
+									aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+								</a></li>
+								<li class="page-item"><a th:classappend="${isLast}?'active':''" th:href="@{'orders?pageNo='+${totalPages-1}}" class="page-link">Last</a></li>
+							</ul>
+						</nav>
+						</div>
+						</th:block>
+					</div>
 		</div>
 	</section>
 </body>
