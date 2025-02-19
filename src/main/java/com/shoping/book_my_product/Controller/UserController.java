@@ -28,7 +28,6 @@ import com.shoping.book_my_product.util.CommonUtil;
 import com.shoping.book_my_product.util.OrderStatus;
 
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
@@ -94,7 +93,7 @@ public class UserController {
 		return "/user/cart";
 	}
 	@GetMapping("/cartQuantityUpdate")
-	public String updateCartQuantity(@RequestParam String sym,@RequestParam long cid) {
+	public String updateCartQuantity(@RequestParam String sym,@RequestParam Integer cid) {
 		cartSer.updateQuantity(sym, cid);
 		return "redirect:/user/carts";
 	}
@@ -137,7 +136,7 @@ public class UserController {
 		return "/user/my_orders";
 	}
 	@GetMapping("/updateOrderStatus")
-	public String updateOrderStatus(@RequestParam long id,@RequestParam Integer st,HttpSession session) {
+	public String updateOrderStatus(@RequestParam Integer id,@RequestParam Integer st,HttpSession session) {
 		OrderStatus[] values = OrderStatus.values();
 		String status=null;
 		for (OrderStatus orderSta : values) {
@@ -190,7 +189,7 @@ public class UserController {
 			}
 			
 		}else {
-			session.setAttribute("errorMs", "Incorrect password");
+			session.setAttribute("errorMs", "Incorrect old password");
 		}
 		return "redirect:/user/profile";
 	}

@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.shoping.book_my_product.entity.ProductOrder;
 
-public interface ProductOrderRepository extends JpaRepository<ProductOrder, Long> {
+public interface ProductOrderRepository extends JpaRepository<ProductOrder, Integer> {
 
-	List<ProductOrder> findByUserUserId(long userId);
+	List<ProductOrder> findByUserUserId(Integer userId);
 	ProductOrder findByOrderId(String orderId);
 }

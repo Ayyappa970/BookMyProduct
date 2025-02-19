@@ -28,7 +28,7 @@ public class CartServiceImpl implements CartService {
 	private ProductRepository productRepo;
 	
 	@Override
-	public Cart saveCart(long productId, long UserId) {
+	public Cart saveCart(Integer productId, Integer UserId) {
 		UserDetails user= userRepo.findById(UserId).get();
 		Product product = productRepo.findById(productId).get();
 		Cart cartStatus = cartRepo.findByProductIdAndUserUserId(productId, UserId);
@@ -48,7 +48,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public List<Cart> getCartByUser(long userId) {
+	public List<Cart> getCartByUser(Integer userId) {
 		List<Cart> carts = cartRepo.findByUserUserId(userId);
 		Double totalOrderPrice=0.0;
 		List<Cart> updateCarts=new ArrayList<>();
@@ -63,13 +63,13 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public long getCountCart(long userId) {
+	public long getCountCart(Integer userId) {
 		long count = cartRepo.countByUserUserId(userId);
 		return count;
 	}
 
 	@Override
-	public void updateQuantity(String sym, long cid) {
+	public void updateQuantity(String sym, Integer cid) {
 		Cart cart = cartRepo.findById(cid).get();
 		int updateQuantity;
 		if(sym.equalsIgnoreCase("dec")) {

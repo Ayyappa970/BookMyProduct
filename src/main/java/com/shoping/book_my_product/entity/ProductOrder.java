@@ -1,7 +1,6 @@
 package com.shoping.book_my_product.entity;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -23,7 +22,7 @@ import lombok.Setter;
 public class ProductOrder {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Integer id;
 	private String orderId;
 	private LocalDate OrderDate;
 	@ManyToOne

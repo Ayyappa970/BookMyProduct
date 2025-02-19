@@ -22,6 +22,8 @@ import com.shoping.book_my_product.entity.UserDetails;
 import com.shoping.book_my_product.repository.UserRepository;
 import com.shoping.book_my_product.service.UserService;
 import com.shoping.book_my_product.util.AppConstant;
+
+import io.micrometer.common.util.StringUtils;
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -38,6 +40,7 @@ public class UserServiceImpl implements UserService {
 		user.setAccountNonLocked(true);
 		user.setFailedAttempt(0);
 		String encode = passwordEncoder.encode(user.getPassword());
+		user.setEmail(user.getEmail().toLowerCase());
 		user.setPassword(encode);
 		return userRepo.save(user);
 	}
@@ -53,7 +56,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Boolean updateAccountStatus(long id, Boolean status) {
+	public Boolean updateAccountStatus(Integer id, Boolean status) {
 		UserDetails details = userRepo.findById(id).get();
 		if(!ObjectUtils.isEmpty(details)) {
 			details.setIsEnable(status);
@@ -93,7 +96,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void resetAttempt(long userId) {
+	public void resetAttempt(Integer userId) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -150,14 +153,47 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserDetails> searchUser(String ch) {
-		return userRepo.findByEmailContainingIgnoreCase(ch);
+	public List<UserDetails> searchUser(String ch,String role) {
+		return userRepo.findByEmailContainingIgnoreCaseAndRole(ch, role);
 	}
+//	@Override
+//	public List<UserDetails> searchAdmin(String ch,String role) {
+//		return userRepo.findByEmailContainingIgnoreCaseAndRole(ch, role);
+//	}
 
 	@Override
 	public Page<UserDetails> getAllUsersPagination(Integer pageNo, Integer pageSize) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize);
 		return userRepo.findAll(pageable);
 	}
+	@Override
+	public UserDetails saveAdmin(UserDetails user) {
+		user.setRole("ROLE_ADMIN");
+		user.setIsEnable(true);
+		user.setAccountNonLocked(true);
+		user.setFailedAttempt(0);
+		String encode = passwordEncoder.encode(user.getPassword());
+		user.setPassword(encode);
+		user.setEmail(user.getEmail().toLowerCase());
+		return userRepo.save(user);
+	}
 
+	@Override
+	public Page<UserDetails> getAllUsersByRole(Integer pageNo, Integer pageSize, String role) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Page<UserDetails> users=null;
+		if(StringUtils.isEmpty(role)) {
+			users=userRepo.findAll(pageable);
+		}else {
+			users=userRepo.findByRole(pageable, role);
+		}
+		return users;
+	}
+
+	@Override
+	public Boolean existsEmail(String email) {
+		return userRepo.existsByEmail(email);
+	}
+
+	
 }

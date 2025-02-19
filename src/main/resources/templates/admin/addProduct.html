@@ -25,7 +25,7 @@
 							</th:block>
 					</div>		
 					<div class="card-body">
-					<form action="/admin/saveProduct" method="post" enctype="multipart/form-data">
+					<form action="/admin/saveProduct" method="post" enctype="multipart/form-data" id="addNewProduct" novalidate>
 						<div class="mb-3">
 							<label class="form-label">Enter Product Name</label>
 							<input class="form-control" name="pName" type="text"/>
@@ -37,7 +37,7 @@
 						<div class="mb-3">
 							<label class="form-label">Enter Category</label>
 							<select name="category" class="form-select">
-								<option>--select--</option>
+								<option></option>
 								<option th:each="c:${categories}">[[${c.name}]]</option>
 							</select>
 						</div>

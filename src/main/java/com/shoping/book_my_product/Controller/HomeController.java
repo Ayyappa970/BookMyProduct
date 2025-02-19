@@ -34,6 +34,7 @@ import com.shoping.book_my_product.service.ProductService;
 import com.shoping.book_my_product.service.UserService;
 import com.shoping.book_my_product.util.CommonUtil;
 
+import io.micrometer.common.util.StringUtils;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -59,7 +60,9 @@ public class HomeController {
 	private CartService cartSer;
 	
     @GetMapping("/")
-    public String index(){
+    public String index(Model model){
+    	model.addAttribute("category",catSer.getActiveCategories().stream().sorted((c1,c2)->c2.getId().compareTo(c1.getId())).limit(6).toList());
+    	model.addAttribute("product", proSer.getAllActiveProducts("").stream().sorted((p1,p2)->p2.getId().compareTo(p1.getId())).limit(8).toList());
         return "index";
     }
     @GetMapping("/signin")
@@ -73,16 +76,21 @@ public class HomeController {
     @GetMapping("/products")
     public String products(Model model,@RequestParam(value = "category",defaultValue="") String category,
     		@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
-    		@RequestParam(name  = "pageSize",defaultValue="4") Integer pageSize){
+    		@RequestParam(name  = "pageSize",defaultValue="4") Integer pageSize,@RequestParam(defaultValue = "") String ch){
     	model.addAttribute("categories", catSer.getActiveCategories());
     	//model.addAttribute("products", proSer.getAllActiveProducts(category));
     	model.addAttribute("parmValue", category);
-    	Page<Product> page = proSer.getAllActiveProductsPagination(pageNo, pageSize, category);
-    	List<Product> products = page.getContent();
+    	Page<Product> page=null;
+    	if(StringUtils.isEmpty(ch)) {
+    		page=proSer.getAllActiveProductsPagination(pageNo, pageSize, category);
+    	}else {
+    		page=proSer.searchActiveProductPagination(pageNo,pageSize,category,ch);
+    	}
+       	List<Product> products = page.getContent();
         model.addAttribute("products", products);
         model.addAttribute("productSize", products.size());
         model.addAttribute("pageNo", page.getNumber());
-        model.addAttribute("totalElement", page.getTotalElements());
+        model.addAttribute("totalElements", page.getTotalElements());
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("isFirst", page.isFirst());
         model.addAttribute("isLast", page.isLast());
@@ -90,7 +98,7 @@ public class HomeController {
     	return "product";
     }
     @GetMapping("/product/{id}")
-    public String product(@PathVariable("id") int id,Model model){
+    public String product(@PathVariable("id") Integer id,Model model){
     	Product product = proSer.getProduct(id);
     	model.addAttribute("product", product);
         return "viewProduct";
@@ -100,20 +108,25 @@ public class HomeController {
 	
 	@PostMapping("/saveUser")
 	public String savUser(@ModelAttribute UserDetails user,@RequestParam("file") MultipartFile file,HttpSession session) throws IOException {
-		String imageName=file.isEmpty()?"default.jpg":file.getOriginalFilename();
-		user.setProfileImage(imageName);
-		UserDetails userDetails = userService.addUser(user);
-		if(!ObjectUtils.isEmpty(userDetails)) {
-			if(!file.isEmpty()) {
-				File saveFile=	new ClassPathResource("static/images").getFile();
-				Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"user_imgs"+File.separator+file.getOriginalFilename());
-				System.out.println(path);
-				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-				session.setAttribute("succMsg", "user registration successfull");
-			}
-			session.setAttribute("errorMsg", "something wrong!");
+		Boolean existsEmail = userService.existsEmail(user.getEmail());
+		if(existsEmail) {
+			session.setAttribute("errorMsg", "email already exists!");
 		}else {
-			session.setAttribute("errorMsg", "something went wrong!");
+			String imageName=file.isEmpty()?"default.jpg":file.getOriginalFilename();
+			user.setProfileImage(imageName);
+			UserDetails userDetails = userService.addUser(user);
+			if(!ObjectUtils.isEmpty(userDetails)) {
+				if(!file.isEmpty()) {
+					File saveFile=	new ClassPathResource("static/images").getFile();
+					Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"user_imgs"+File.separator+file.getOriginalFilename());
+					System.out.println(path);
+					Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+					session.setAttribute("succMsg", "user registration successfull");
+				}
+				session.setAttribute("errorMsg", "something wrong!");
+			}else {
+				session.setAttribute("errorMsg", "something went wrong!");
+			}
 		}
 		return "redirect:/register";
 	}
@@ -185,10 +198,19 @@ public class HomeController {
 	}
 	
 	@GetMapping("/search")
-	public String searchProduct(@RequestParam String ch,Model model) {
+	public String searchProduct(@RequestParam String ch,Model model,HttpSession session,@RequestParam(value = "category",defaultValue="") String category,
+    		@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
+    		@RequestParam(name  = "pageSize",defaultValue="4") Integer pageSize) {
 		List<Product> searchedProducts = proSer.searchProduct(ch);
-		model.addAttribute("products", searchedProducts);
-		model.addAttribute("productSize", searchedProducts.size());
+		Page<Product> page = proSer.getAllActiveProductsPagination(pageNo, pageSize, category);
+		if(ObjectUtils.isEmpty(searchedProducts)) {
+			session.setAttribute("errorMsg", "No Product Found");
+		}else {
+			model.addAttribute("products", searchedProducts);
+			model.addAttribute("categories", catSer.getActiveCategories());
+//			model.addAttribute("productSize", searchedProducts.size());
+			model.addAttribute("totalPages", page.getTotalPages());
+		}
 		return "product";
 	}
 }

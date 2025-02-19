@@ -39,11 +39,11 @@
 											<tr>
 												<th scope="row">Mobile Number</th>
 												<td><input class="form-control"
-													th:value="${user.mobileNumber}" name="mobileNumber"/></td>
+													th:value="${user.mobileNumber}" name="mobileNumber" type="number"/></td>
 											</tr>
 											<tr>
 												<th scope="row">Email</th>
-												<td><input class="form-control"
+												<td><input class="form-control disabledd"
 													th:value="${user.email}" disabled /></td>
 											</tr>
 											<tr>
@@ -67,13 +67,13 @@
 											</tr>
 											<tr>
 												<th scope="row">Role</th>
-												<td><input class="form-control" th:value="${user.role}"
+												<td><input class="form-control disabledd" th:value="${user.role}"
 													disabled /></td>
 											</tr>
 											<th:block th:if="${user.isEnable==true}">
 												<tr>
 													<th scope="row">Account Status</th>
-													<td><input class="form-control" value="Active"
+													<td><input class="form-control disabledd" value="Active"
 														disabled />
 														<input type="hidden" th:value="${user.userId}" name="userId"/>
 														</td>
@@ -82,7 +82,7 @@
 											<th:block th:unless="${user.isEnable==true}">
 												<tr>
 													<th scope="row">Account Status</th>
-													<td><input class="form-control" value="Disable"
+													<td><input class="form-control disabledd" value="Disable"
 														disabled />
 														<input type="hidden" th:value="${user.userId}" name="userId"/>
 														</td>
@@ -116,7 +116,7 @@
 						<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
 					</th:block>
 							<hr />
-							<form action="/user/changePassword" method="post">
+							<form action="/user/changePassword" method="post" id="userPasswordChange" novalidate>
 								<table class="table table-borderless mt-5">
 									<tbody>
 										<tr>
@@ -126,7 +126,7 @@
 										</tr>
 										<tr>
 											<th scope="row">New Password</th>
-											<td><input class="form-control" name="newPass" /></td>
+											<td><input class="form-control" name="newPass" id="newPassword"/></td>
 										</tr>
 										<tr>
 											<th scope="row">Confirm Password</th>

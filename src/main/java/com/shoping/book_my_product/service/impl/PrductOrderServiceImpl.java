@@ -32,7 +32,7 @@ public class PrductOrderServiceImpl implements ProductOrderService {
 	private CommonUtil commonUtil;
 	
 	@Override
-	public void saveOrder(long userId,OrderRequestDto orRequestDto) throws Exception {
+	public void saveOrder(Integer userId,OrderRequestDto orRequestDto) throws Exception {
 		List<Cart> carts = cartRepo.findByUserUserId(userId);
 		for(Cart cart:carts) {
 			ProductOrder order=new ProductOrder();
@@ -63,13 +63,13 @@ public class PrductOrderServiceImpl implements ProductOrderService {
 	}
 
 	@Override
-	public List<ProductOrder> getAllOrderedProducts(long userId) {
+	public List<ProductOrder> getAllOrderedProducts(Integer userId) {
 		List<ProductOrder> orders= orderRepo.findByUserUserId(userId);
 		return orders;
 	}
 
 	@Override
-	public ProductOrder updateOrderStatus(long id, String status) {
+	public ProductOrder updateOrderStatus(Integer id, String status) {
 		ProductOrder productOrder = orderRepo.findById(id).get();
 		if(!ObjectUtils.isEmpty(productOrder)) {
 			productOrder.setStatus(status);

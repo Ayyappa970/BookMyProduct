@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.shoping.book_my_product.entity.Cart;
 
-public interface CartRepository extends JpaRepository<Cart, Long>{
-	public Cart findByProductIdAndUserUserId(long productId,long userId);
+public interface CartRepository extends JpaRepository<Cart, Integer>{
+	public Cart findByProductIdAndUserUserId(Integer productId,Integer userId);
 
-	public long countByUserUserId(long userId);
+	public long countByUserUserId(Integer userId);
 
-	public List<Cart> findByUserUserId(long userId);
+	public List<Cart> findByUserUserId(Integer userId);
 }

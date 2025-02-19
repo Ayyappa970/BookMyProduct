@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.shoping.book_my_product.entity.Product;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Integer> {
 
 	public List<Product> findByIsActiveTrue();
 
@@ -19,6 +19,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	public Page<Product> findByIsActiveTrue(Pageable pageable);
 
 	public Page<Product> findByCategory(Pageable pageable,String category);
+	
+	Page<Product> findBypNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseAndIsActiveTrue(String ch, String ch2, Pageable pageable);
 
 	
 

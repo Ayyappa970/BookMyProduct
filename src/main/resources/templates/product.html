@@ -10,11 +10,10 @@
 		<div class="container-fluid bg-primary p-5 mt-5 ">
 			<div class="row">
 				<div class="col-md-8 offset-md-2">
-					<form action="search" method="get">
+					<form action="/products" method="get">
 						<div class="input-group">
 							<input type="search" class="form-control" name="ch" placeholder="search products here" required/>
-							<a
-							href="/products"
+							<a href="/products"
 							class="btn text-decoration-none text-light"><i
 							class="fa-solid fa-arrows-rotate fs-4 mt-1 me-3"></i></a>
 							<!-- <button class="btn btn-light text-dark ms-3 col-md-2">
@@ -66,28 +65,30 @@
 							</div>
 						</div>
 					</div>
-					<th:block th:if="${productSize}>0">
+					
 						<div class="row mt-3 col-md-12">
 						<div class="col offset-md-1">
-							<span>Total Products : [[${totalElement}]]</span>
+							<span>Total Products : [[${totalElements}]]</span>
 							</div>
 							<div class="col offset-md-3">
+							<th:block th:if="${productSize>0}">
 							<nav aria-label="Page navigation example">
 							<ul class="pagination">
 							<li class="page-item"><a th:classappend="${isFirst}?'active':''" th:href="@{'products?pageNo=0'}" class="page-link">First</a></li>
 								<li class="page-item" ><a class="page-link" th:classappend="${isFirst}?'disabled':''" th:href="@{'products?pageNo='+${pageNo-1}}"
 									aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 								</a></li>
-								<li th:classappend="${pageNo+1==i}?'active':''" th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item"><a class="page-link" th:href="@{'/products?pageNo='+${i-1}}">[[${i}]]</a></li>
+								<li th:each="i:${#numbers.sequence(1,totalPages)}" th:classappend="${pageNo+1==i}?'active':''" class="page-item"><a class="page-link" th:href="@{'/products?pageNo='+${i-1}}">[[${i}]]</a></li>
 								<li class="page-item"><a class="page-link" th:classappend="${isLast}?'disabled':''" th:href="@{'products?pageNo='+${pageNo+1}}"
 									aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 								</a></li>
 								<li class="page-item"><a th:classappend="${isLast}?'active':''" th:href="@{'products?pageNo='+${totalPages-1}}" class="page-link">Last</a></li>
 							</ul>
 						</nav>
+						</th:block>
 						</div>
 					</div>
-					</th:block>
+					
 				</div>
 			</div>
 		</div>

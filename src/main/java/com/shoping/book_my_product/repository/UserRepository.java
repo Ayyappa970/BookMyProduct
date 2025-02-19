@@ -2,16 +2,22 @@ package com.shoping.book_my_product.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.shoping.book_my_product.entity.UserDetails;
 
-public interface UserRepository extends JpaRepository<UserDetails, Long> {
+public interface UserRepository extends JpaRepository<UserDetails, Integer> {
 	public UserDetails findByEmail(String email);
 
-	public List<UserDetails> findByRole(String role);
+	List<UserDetails> findByRole(String role);
 	
 	public UserDetails findByResetToken(String token);
 	
-	public List<UserDetails> findByEmailContainingIgnoreCase(String ch);
+	public List<UserDetails> findByEmailContainingIgnoreCaseAndRole(String ch,String role);
+	
+	public Page<UserDetails> findByRole(Pageable pageable,String role);
+
+	public Boolean existsByEmail(String email);
 }

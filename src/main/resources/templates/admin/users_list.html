@@ -15,7 +15,8 @@
 		<a class="btn btn-info">Admin's List</a> -->
 			<div class="card mb-3">
 				<div class="card-header text-center">
-					<p class="fs-4">Users List</p>
+					<p class="fs-4" th:if="${role}=='ROLE_USER'">Users List</p>
+					<p class="fs-4" th:if="${role}=='ROLE_ADMIN'">Admins List</p>
 					<th:block th:if="${session.succMsg}">
 								<p class="text-success fw-bold">[[${session.succMsg}]]</p>
 								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
@@ -25,11 +26,11 @@
 								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
 							</th:block>
 				</div>
-				<form action="/admin/searchUser" method="get"
+				<form action="/admin/searchUser" method="get" 
 							class="col-md-4 offset-md-8 mt-3">
 							<div class="input-group">
 								<input type="search" class="form-control me-1" name="ch"
-									placeholder="search user by email id" required /> <a
+									placeholder="search by email id" required /> <a
 									href="/admin/userslist"
 									class="btn text-decoration-none text-dark"><i
 									class="fa-solid fa-arrows-rotate fs-4 mt-1 me-3"></i></a>
@@ -42,8 +43,10 @@
 					<table class="table table-striped">
 						<thead>
 							<tr>
-								<th scope="col">User Id</th>
-								<th scope="col">User Name</th>
+								<th scope="col" th:if="${role}=='ROLE_USER'">User Id</th>
+								<th scope="col" th:if="${role}=='ROLE_USER'">User Name</th>
+								<th scope="col" th:if="${role}=='ROLE_ADMIN'">Admin Id</th>
+								<th scope="col" th:if="${role}=='ROLE_ADMIN'">Admin Name</th>
 								<th scope="col">Mobile Number</th>
 								<th scope="col">Email</th>
 								<th scope="col">Address</th>
@@ -56,6 +59,7 @@
 						</thead>
 						<tbody>
 						<th:block th:if="${users!=null}">
+						<th:block th:if="${role=='ROLE_USER'}">
 							<tr th:each="user,u:${users}">
 								<th scope="row">[[${user.userId}]]</th>
 								<td>[[${user.userName}]]</td>
@@ -73,7 +77,30 @@
 									<a th:href="@{'/admin/updateStatus?status=true&id='+${user.userId}}" class="btn btn-sm btn-success" >Active</a>
 									<a th:href="@{'/admin/updateStatus?status=false&id='+${user.userId}}" class="btn btn-sm btn-danger" >Inactive</a> 
 								</td>
+								
 							</tr>
+							</th:block>
+							<th:block th:unless="${role=='ROLE_USER'}">
+							<tr th:each="user,u:${users}">
+								<th scope="row">[[${user.userId}]]</th>
+								<td>[[${user.userName}]]</td>
+								<td>[[${user.mobileNumber}]]</td>
+								<td>[[${user.email}]]</td>
+								<td>[[${user.address+', '+ user.city+', '+user.state+', '+user.pincode}]]</td>
+								<!-- <td>[[${user.password}]]</td> -->
+								<!-- <td>
+									<img th:src="@{'/images/user_imgs/'+${user.profileImage}}" width="50" height="50" class="rounded-circle"/>
+								</td> -->
+								<td>[[${user.role}]]</td>
+								<td>[[${user.isEnable}]]</td>
+								<td>
+									<!-- <a th:href="@{'/admin/editProduct/'+${pro.id}}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i> edit</a> -->
+									<a th:href="@{'/admin/updateStatus?status=true&id='+${user.userId}}" class="btn btn-sm btn-success" >Active</a>
+									<a th:href="@{'/admin/updateStatus?status=false&id='+${user.userId}}" class="btn btn-sm btn-danger" >Inactive</a> 
+								</td>
+								
+							</tr>
+							</th:block>
 							</th:block>
 						</tbody>
 					</table>
@@ -88,13 +115,15 @@
 			</div>
 			<div class="row mt-3 col-md-12">
 						<div class="col offset-md-1">
-							<span>Total Users : [[${totalElements}]]</span>
+							<span th:if="${role}=='ROLE_USER'">Total Users : [[${totalElements}]]</span>
+							<span th:if="${role}=='ROLE_ADMIN'">Total Admins : [[${totalElements}]]</span>
 							</div>
 							<th:block th:if="${totalElements>1}">
 							<div class="col offset-md-3">
 							<nav aria-label="Page navigation example">
 							<ul class="pagination">
-							<li class="page-item"><a th:classappend="${isFirst}?'active':''" th:href="@{'userslist?pageNo=0'}" class="page-link">First</a></li>
+							<th:block th:if="${role=='ROLE_USER'}">
+								<li class="page-item"><a th:classappend="${isFirst}?'active':''" th:href="@{'userslist?pageNo=0'}" class="page-link">First</a></li>
 								<li class="page-item" ><a class="page-link" th:classappend="${isFirst}?'disabled':''" th:href="@{'userslist?pageNo='+${pageNo-1}}"
 									aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 								</a></li>
@@ -103,6 +132,19 @@
 									aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 								</a></li>
 								<li class="page-item"><a th:classappend="${isLast}?'active':''" th:href="@{'userslist?pageNo='+${totalPages-1}}" class="page-link">Last</a></li>
+								</th:block>
+								
+								<th:block th:unless="${role=='ROLE_USER'}">
+								<li class="page-item"><a th:classappend="${isFirst}?'active':''" th:href="@{'userslistbyAdmin?pageNo=0'}" class="page-link">First</a></li>
+								<li class="page-item" ><a class="page-link" th:classappend="${isFirst}?'disabled':''" th:href="@{'userslistbyAdmin?pageNo='+${pageNo-1}}"
+									aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+								</a></li>
+								<li th:classappend="${pageNo+1==i}?'active':''" th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item"><a class="page-link" th:href="@{'/admin/userslistbyAdmin?pageNo='+${i-1}}">[[${i}]]</a></li>
+								<li class="page-item"><a class="page-link" th:classappend="${isLast}?'disabled':''" th:href="@{'userslistbyAdmin?pageNo='+${pageNo+1}}"
+									aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+								</a></li>
+								<li class="page-item"><a th:classappend="${isLast}?'active':''" th:href="@{'userslistbyAdmin?pageNo='+${totalPages-1}}" class="page-link">Last</a></li>
+								</th:block>
 							</ul>
 						</nav>
 						</div>

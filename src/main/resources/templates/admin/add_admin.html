@@ -3,20 +3,16 @@
 	th:replace="~{base::layout(~{::section})}">
 <head>
 <meta charset="UTF-8">
-<title>Register Page</title>
+<title>Add Admin Page</title>
 </head>
 <body>
 	<section>
 		<div class="container mt-1 p-3">
 			<div class="row">
-				<div class="col-md-6 p-5 mt-5">
-					<img src="images/register.jpg" alt="error" width="100%"
-						height="310" />
-				</div>
-				<div class="col-md-6 p-5">
+				<div class="col-md-6 offset-md-3 p-5">
 					<div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
 						<div class="card-header text-center">
-							<p class="fs-4">Register</p>
+							<p class="fs-4">Add Admin</p>
 							<th:block th:if="${session.succMsg}">
 								<p class="text-success fw-bold">[[${session.succMsg}]]</p>
 								<th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
@@ -27,7 +23,7 @@
 							</th:block>
 						</div>
 						<div class="card-body">
-							<form action="/saveUser" enctype="multipart/form-data" method="post" id="userRegister" novalidate>
+							<form action="/admin/saveAdmin" enctype="multipart/form-data" method="post" id="userRegister" novalidate>
 								<div class="row">
 									<div class="col">
 										<label class="form-label">Full Name</label> <input
@@ -67,7 +63,7 @@
 								<div class="row">
 									<div class="col mb-2">
 										<label class="form-label">Password</label> <input
-											class="form-control" name="password" id="pass" type="password" required/>
+											class="form-control" name="password" type="password" required/>
 									</div>
 									<div class="col mb-2">
 										<label class="form-label">Confirm Password</label> <input
@@ -81,12 +77,12 @@
 									</div>
 								</div>
 								<button type="submit"
-									class="btn btn-primary text-white col-md-12 mt-3">Register</button>
+									class="btn btn-primary text-white col-md-12 mt-3">Add</button>
 							</form>
 						</div>
-						<div class="card-footer text-center">
+						<!-- <div class="card-footer text-center">
 							Have an account ? <a href="/login" class="text-decoration-none">Login</a>
-						</div>
+						</div> -->
 					</div>
 				</div>
 			</div>

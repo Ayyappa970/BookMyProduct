@@ -111,7 +111,7 @@ public class AdminController {
 		return "redirect:/admin/category";
 	}
 	@GetMapping("/delete/{id}")
-	public String deleteCategory(@PathVariable("id") long id,HttpSession session) {
+	public String deleteCategory(@PathVariable("id") Integer id,HttpSession session) {
 		Boolean category = categoryService.deleteCategory(id);
 		if(category) 
 			session.setAttribute("succMsg", "Category deleted");
@@ -120,7 +120,7 @@ public class AdminController {
 		return "redirect:/admin/category";
 	}
 	@GetMapping("/edit/{id}")
-	public String editCategory(@PathVariable("id") long id,Model model) {
+	public String editCategory(@PathVariable("id") Integer id,Model model) {
 		model.addAttribute("category", categoryService.getCategory(id));
 		return "admin/edit_category";
 	}
@@ -186,7 +186,7 @@ public class AdminController {
 		return "admin/view_products";
 	}
 	@GetMapping("/deleteProduct/{id}")
-	public String deleteProduct(@PathVariable("id") long id,HttpSession session) {
+	public String deleteProduct(@PathVariable("id") Integer id,HttpSession session) {
 		Boolean product = prService.deleteProduct(id);
 		if(product)
 			session.setAttribute("succMsg", "Product Deleted");
@@ -195,7 +195,7 @@ public class AdminController {
 		return "redirect:/admin/viewProduct";
 	}
 	@GetMapping("/editProduct/{id}")
-	public String editProduct(@PathVariable("id") long id,Model model) {
+	public String editProduct(@PathVariable("id") Integer id,Model model) {
 		model.addAttribute("product", prService.getProduct(id));
 //		model.addAttribute("categories", categoryService.getAllCategory());
 		return "admin/edit_product";
@@ -230,11 +230,29 @@ public class AdminController {
 	}
 	@GetMapping("/userslist")
 	public String users(Model model,@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
-    		@RequestParam(name  = "pageSize",defaultValue="3") Integer pageSize) {
+    		@RequestParam(name  = "pageSize",defaultValue="3") Integer pageSize,@RequestParam(name  = "role",defaultValue="ROLE_USER") String role) {
 		//model.addAttribute("users", userService.getAllUsers("ROLE_USER"));
-		Page<UserDetails> page = userService.getAllUsersPagination(pageNo, pageSize);
+		Page<UserDetails> page = userService.getAllUsersByRole(pageNo, pageSize, role);
     	List<UserDetails> users = page.getContent();
         model.addAttribute("users", users);
+        model.addAttribute("role", role);
+       // model.addAttribute("usersCount", users.size());
+        model.addAttribute("pageNo", page.getNumber());
+        model.addAttribute("totalElements", page.getTotalElements());
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("isFirst", page.isFirst());
+        model.addAttribute("isLast", page.isLast());
+        model.addAttribute("pageSize", pageSize);
+		return "admin/users_list";
+	}
+	@GetMapping("/userslistbyAdmin")
+	public String Admins(Model model,@RequestParam(name  = "pageNo",defaultValue="0") Integer pageNo,
+    		@RequestParam(name  = "pageSize",defaultValue="2") Integer pageSize,@RequestParam(name  = "role",defaultValue="ROLE_ADMIN") String role) {
+		//model.addAttribute("users", userService.getAllUsers("ROLE_USER"));
+		Page<UserDetails> page = userService.getAllUsersByRole(pageNo, pageSize, role);
+    	List<UserDetails> users = page.getContent();
+        model.addAttribute("users", users);
+        model.addAttribute("role", role);
        // model.addAttribute("usersCount", users.size());
         model.addAttribute("pageNo", page.getNumber());
         model.addAttribute("totalElements", page.getTotalElements());
@@ -272,7 +290,7 @@ public class AdminController {
 		return "/admin/orders";
 	}
 	@PostMapping("/updateOrderState")
-	public String updateOrderStatus(@RequestParam long id,@RequestParam Integer st,HttpSession session) {
+	public String updateOrderStatus(@RequestParam Integer id,@RequestParam Integer st,HttpSession session) {
 		OrderStatus[] values = OrderStatus.values();
 		String status=null;
 		for (OrderStatus orderSta : values) {
@@ -348,7 +366,7 @@ public class AdminController {
 	}
 	@GetMapping("/searchProduct")
 	public String searchProduct(@RequestParam String ch,Model model,HttpSession session) {
-		List<Product> searchedProducts = prService.searchProduct(ch);
+		List<Product> searchedProducts = prService.searchProduct(ch.trim());
 		if(ObjectUtils.isEmpty(searchedProducts)) {
 			session.setAttribute("errorMs", "No Product Found");
 		}else {
@@ -358,7 +376,7 @@ public class AdminController {
 	}
 	@GetMapping("/searchCategory")
 	public String searchCategory(@RequestParam String ch,Model model,HttpSession session) {
-		List<Category> categories = categoryService.searchProduct(ch);
+		List<Category> categories = categoryService.searchProduct(ch.trim());
 		if(ObjectUtils.isEmpty(categories)) {
 			session.setAttribute("errorMs", "No category found");
 		}else {
@@ -367,13 +385,52 @@ public class AdminController {
 		return "admin/category";
 	}
 	@GetMapping("/searchUser")
-	public String searchUser(@RequestParam String ch,Model model,HttpSession session) {
-		List<UserDetails> userByEmail = userService.searchUser(ch);
+	public String searchUser(@RequestParam String ch,Model model,HttpSession session,@RequestParam(name  = "role",defaultValue="ROLE_USER") String role) {
+		List<UserDetails> userByEmail = userService.searchUser(ch.trim(), role);
 		if(ObjectUtils.isEmpty(userByEmail)) {
 			session.setAttribute("errorMs", "No user found by email id");
 		}else {
 			model.addAttribute("users", userByEmail);
 		}
 		return "admin/users_list";
+	}
+//	@GetMapping("/searchAdmin")
+//	public String searchAdmin(@RequestParam String ch,Model model,HttpSession session,@RequestParam(name  = "role",defaultValue="ROLE_ADMIN") String role) {
+//		List<UserDetails> adminByEmail = userService.searchAdmin(ch.trim(), role);
+//		if(ObjectUtils.isEmpty(adminByEmail)) {
+//			session.setAttribute("errorMs", "No Admin found by email id");
+//		}else {
+//			model.addAttribute("admins", adminByEmail);
+//		}
+//		return "admin/admins_list";
+//	}
+	@GetMapping("/addAdmin")
+	public String addAdmin() {
+		return "admin/add_admin";
+	}
+	
+	@PostMapping("/saveAdmin")
+	public String saveAdmin(@ModelAttribute UserDetails user,@RequestParam("file") MultipartFile file,HttpSession session) throws IOException {
+		Boolean existsEmail = userService.existsEmail(user.getEmail());
+		if(existsEmail) {
+			session.setAttribute("errorMsg", "email already exists!");
+		}else {
+		String imageName=file.isEmpty()?"default.jpg":file.getOriginalFilename();
+		user.setProfileImage(imageName);
+		UserDetails userDetails = userService.saveAdmin(user);
+		if(!ObjectUtils.isEmpty(userDetails)) {
+			if(!file.isEmpty()) {
+				File saveFile=	new ClassPathResource("static/images").getFile();
+				Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"user_imgs"+File.separator+file.getOriginalFilename());
+				System.out.println(path);
+				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+				session.setAttribute("succMsg", "Admin registration successfull");
+			}
+			session.setAttribute("errorMsg", "something wrong!");
+		}else {
+			session.setAttribute("errorMsg", "something went wrong!");
+		}
+		}
+		return "redirect:/admin/addAdmin";
 	}
 }

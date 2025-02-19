@@ -72,7 +72,10 @@
 											<form class="col-md-12" action="/admin/updateOrderState"
 												method="post">
 												<div class="input-group mt-3">
-													<select class="form-select" name="st"
+													
+													<th:block
+														th:if="${o.status=='Delivered' || o.status=='Cancelled'}">
+														<select class="form-select disabledd" name="st"
 														aria-label="Default select example">
 														<option selected>order status</option>
 														<option value="1">In Progress</option>
@@ -83,12 +86,21 @@
 														<option value="6">Cancelled</option>
 													</select> <input type="hidden" class="btn btn-sm btn-primary"
 														name="id" th:value="${o.id}" />
-													<th:block
-														th:if="${o.status=='Delivered' || o.status=='Cancelled'}">
 														<a class="btn btn-sm btn-danger disabledd">update</a>
 													</th:block>
 													<th:block
 														th:unless="${o.status=='Delivered' || o.status=='Cancelled'}">
+														<select class="form-select" name="st"
+														aria-label="Default select example">
+														<option selected>order status</option>
+														<option value="1">In Progress</option>
+														<option value="2">Received</option>
+														<option value="3">Packed</option>
+														<option value="4">Out for delivery</option>
+														<option value="5">Delivered</option>
+														<option value="6">Cancelled</option>
+													</select> <input type="hidden" class="btn btn-sm btn-primary"
+														name="id" th:value="${o.id}" />
 														<button class="btn btn-sm btn-primary ms-3">update</button>
 													</th:block>
 												</div>
@@ -110,10 +122,11 @@
 				</div>
 			</div>
 			<div class="row mt-3 col-md-12">
-						<div class="col offset-md-1">
+						
+							<th:block th:if="${totalElements>1}">
+							<div class="col offset-md-1">
 							<span>Total Orders : [[${totalElements}]]</span>
 							</div>
-							<th:block th:if="${totalElements>1}">
 							<div class="col offset-md-3">
 							<nav aria-label="Page navigation example">
 							<ul class="pagination">

@@ -1,7 +1,6 @@
 package com.shoping.book_my_product.service.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Boolean deleteProduct(long id) {
+	public Boolean deleteProduct(Integer id) {
 		Product product = productRepo.findById(id).orElse(null);
 		if (!ObjectUtils.isEmpty(product)) {
 			productRepo.delete(product);
@@ -48,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Product getProduct(long id) {
+	public Product getProduct(Integer id) {
 		Product product = productRepo.findById(id).orElse(null);
 		if (!ObjectUtils.isEmpty(product))
 			return product;
@@ -120,6 +119,19 @@ public class ProductServiceImpl implements ProductService {
 	public Page<Product> getAllProductsPagination(Integer pageNo, Integer pageSize) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize);
 		return productRepo.findAll(pageable);
+	}
+
+	@Override
+	public Page<Product> searchActiveProductPagination(Integer pageNo, Integer pageSize,String category,String ch) {
+		Page<Product> pageProducts=null;
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		pageProducts=productRepo.findBypNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseAndIsActiveTrue(ch, ch, pageable);
+//		if(ObjectUtils.isEmpty(category)) {
+//			pageProducts=productRepo.findByIsActiveTrue(pageable);
+//		}else {
+//			pageProducts=productRepo.findByCategory(pageable,category);
+//		}
+		return pageProducts;
 	}
 
 }

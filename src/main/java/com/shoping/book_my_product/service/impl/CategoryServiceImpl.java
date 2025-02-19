@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import com.shoping.book_my_product.entity.Category;
-import com.shoping.book_my_product.entity.Product;
 import com.shoping.book_my_product.repository.CategoryRepository;
 import com.shoping.book_my_product.service.CategoryService;
 @Service
@@ -32,7 +31,7 @@ public class CategoryServiceImpl implements CategoryService{
 		return categoryRepo.findAll();
 	}
 	@Override
-	public Boolean deleteCategory(long id) {
+	public Boolean deleteCategory(Integer id) {
 		Category category = categoryRepo.findById(id).orElse(null);
 		if(!ObjectUtils.isEmpty(category)) {
 			categoryRepo.delete(category);
@@ -41,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService{
 		return false;
 	}
 	@Override
-	public Category getCategory(long id) {
+	public Category getCategory(Integer id) {
 		Category category = categoryRepo.findById(id).orElse(null);
 		if(category!=null)
 			return category;
