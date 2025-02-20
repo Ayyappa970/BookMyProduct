@@ -18,4 +18,5 @@ public interface ProductService {
 	public Page<Product> getAllActiveProductsPagination(Integer pageNo,Integer pageSize,String category);
 	public Page<Product> getAllProductsPagination(Integer pageNo,Integer pageSize);
 	public Page<Product> searchActiveProductPagination(Integer pageNo, Integer pageSize,String category, String ch);
+	
 }

@@ -193,5 +193,9 @@ public class UserController {
 		}
 		return "redirect:/user/profile";
 	}
+	@GetMapping("/buyNow")
+	public String buyNow() {
+		return "/user/order";
+	}
 	
 }

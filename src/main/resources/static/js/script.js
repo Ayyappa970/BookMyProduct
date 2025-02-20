@@ -434,3 +434,58 @@ jQuery.validator.addMethod("email", function(value, element) {
 jQuery.validator.addMethod("all", function(value, element) {
   return this.optional(element) || /^[a-zA-Z0-9," "]+$/i.test(value);
 });
+
+
+//Show and hide password for login page
+const passwordInput = document.getElementById('password');
+const showPasswordCheckbox = document.getElementById('showPassword');
+const pass=document.getElementById('passw');
+showPasswordCheckbox.addEventListener('change', function() {
+    if (this.checked) {
+        passwordInput.type = 'text';
+        pass.textContent='hide'
+    } else {
+        passwordInput.type = 'password';
+        pass.textContent='show'
+    }
+});
+
+//Show and hide password for registration page both user and admin
+const passwordReg = document.getElementById('pass');
+const cpasswordReg = document.getElementById('cpass');
+const showPasswordReg = document.getElementById('showPassword');
+const regPass=document.getElementById('passw');
+showPasswordReg.addEventListener('change', function() {
+    if (this.checked) {
+        passwordReg.type = 'text';
+        cpasswordReg.type = 'text';
+        regPass.textContent='hide'
+    } else {
+        passwordReg.type = 'password';
+        cpasswordReg.type = 'password';
+        regPass.textContent='show'
+    }
+});
+
+
+//Show and hide password for profile page both user and admin
+const passwordold = document.getElementById('oldPassword');
+const cpasswordnew = document.getElementById('newPassword');
+const cpasswordnewcon = document.getElementById('confirmPassword');
+const showPasswordprofile = document.getElementById('showPassword');
+const proPass=document.getElementById('passw');
+showPasswordprofile.addEventListener('change', function() {
+    if (this.checked) {
+        passwordold.type = 'text';
+        cpasswordnew.type = 'text';
+         cpasswordnewcon.type = 'text';
+        proPass.textContent='hide'
+    } else {
+        passwordold.type = 'password';
+        cpasswordnew.type = 'password';
+        cpasswordnewcon.type = 'password';
+        proPass.textContent='show'
+    }
+});
+
+
