@@ -18,11 +18,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.shoping.book_my_product.dto.OrderRequestDto;
 import com.shoping.book_my_product.entity.Cart;
 import com.shoping.book_my_product.entity.Category;
+import com.shoping.book_my_product.entity.Product;
 import com.shoping.book_my_product.entity.ProductOrder;
 import com.shoping.book_my_product.entity.UserDetails;
 import com.shoping.book_my_product.service.CartService;
 import com.shoping.book_my_product.service.CategoryService;
 import com.shoping.book_my_product.service.ProductOrderService;
+import com.shoping.book_my_product.service.ProductService;
 import com.shoping.book_my_product.service.UserService;
 import com.shoping.book_my_product.util.CommonUtil;
 import com.shoping.book_my_product.util.OrderStatus;
@@ -33,6 +35,8 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/user")
 public class UserController {
+	@Autowired
+	private ProductService prService;
 	
 	@Autowired
 	private UserService userService;
@@ -126,12 +130,18 @@ public class UserController {
 		return "redirect:/user/successPage";
 	}
 	@GetMapping("/successPage")
-	public String successPage() {
+	public String successPage(Principal principal) {
+		UserDetails user= getLoggedInUserDetails(principal);
+		List<Cart> list = cartSer.getCartByUser(user.getUserId());
+		Integer quantity = list.get(list.size()-1).getQuantity();
+		Product product = prService.getProduct(list.get(list.size()-1).getProduct().getId());
+		product.setStock(product.getStock()-quantity);
+		prService.saveProduct(product);
 		return "/user/order_success";
 	}
 	@GetMapping("/myOrders")
 	public String myOrders(Model model,Principal principal) {
-		List<ProductOrder> orders = orderSer.getAllOrderedProducts(getLoggedInUserDetails(principal).getUserId());
+		List<ProductOrder> orders = orderSer.getAllOrderedProducts(getLoggedInUserDetails(principal).getUserId()).stream().sorted((c1,c2)->c2.getId().compareTo(c1.getId())).toList();
 		model.addAttribute("orders", orders);
 		return "/user/my_orders";
 	}
